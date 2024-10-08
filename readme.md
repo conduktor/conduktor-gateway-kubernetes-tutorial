@@ -76,12 +76,17 @@ kubectl -n conduktor \
 ## Deploy Helm Charts
 
 ```
-helm install -n conduktor kafka oci://registry-1.docker.io/bitnamicharts/kafka
+helm install \
+    -f ./helm/kafka-values.yml \
+    -n conduktor \
+    kafka oci://registry-1.docker.io/bitnamicharts/kafka
 ```
 
 
 ```
 helm repo add conduktor https://helm.conduktor.io
 helm repo update
-helm install my-gateway conduktor/conduktor-gateway
+helm install \
+    -f ./helm/gateway-values.yml \
+    gateway conduktor/conduktor-gateway
 ```
