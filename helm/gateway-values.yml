@@ -1,12 +1,19 @@
 gateway:
+  replicas: 2
+  secretRef: gateway-env-vars
   env:
     # Configure connection to Kafka
-    KAFKA_BOOTSTRAP_SERVERS: pkc-xxxxx.region.provider.confluent.cloud:9092
+    KAFKA_BOOTSTRAP_SERVERS: kafka.conduktor.svc.cluster.local
     KAFKA_SASL_MECHANISM: PLAIN
     KAFKA_SECURITY_PROTOCOL: SASL_SSL
-    KAFKA_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="<your API key>" password="<your API secret>";
     # Configure Client -> Gateway
     GATEWAY_SECURITY_PROTOCOL: DELEGATED_SASL_SSL
+    GATEWAY_ADVERTISED_HOST: gateway.conduktor.svc.cluster.local
+    GATEWAY_ROUTING_MECHANISM: host
   portRange:
     start: 9092
     count: 1
+
+tls:
+  enable: true
+  secretRef: gateway-cert

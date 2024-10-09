@@ -73,6 +73,16 @@ kubectl -n conduktor \
     create secret generic kafka-cert \
         --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks \
         --from-file=kafka.keystore.jks=./certs/kafka.keystore.jks
+
+kubectl -n conduktor \
+    create secret generic gateway-cert \
+        --from-file=keystore.jks=./certs/gateway.keystore.jks
+
+kubectl -n conduktor \
+    create secret generic gateway-env-vars \
+        --from-literal=KAFKA_SASL_JAAS_CONFIG="org.apache.kafka.common.security.plain.PlainLoginModule required username=\"admin\" password=\"admin-secret\";" \
+        --from-literal=GATEWAY_SSL_KEY_STORE_PASSWORD=conduktor \
+        --from-literal=GATEWAY_SSL_KEY_PASSWORD=conduktor
 ```
 
 ## Deploy Helm Charts
@@ -93,5 +103,6 @@ helm repo update
 ```
 helm install \
     -f ./helm/gateway-values.yml \
+    -n conduktor \
     gateway conduktor/conduktor-gateway
 ```
