@@ -133,7 +133,7 @@ generate_truststore() {
 
 clean_certificates
 generate_ca_cert
-generate_certificate kafka *.conduktor.svc.cluster.local 
+generate_certificate kafka kafka.conduktor.svc.cluster.local *.kafka-controller-headless.conduktor.svc.cluster.local
 generate_certificate gateway *.conduktor.svc.cluster.local *.k8s.orb.local
 generate_truststore
 

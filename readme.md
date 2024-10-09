@@ -59,18 +59,20 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 kubectl create namespace conduktor
 
 kubectl -n conduktor \
-    create secret generic client-passwords \
+    create secret generic keystore-passwords \
         --from-literal=keystore-password=conduktor \
         --from-literal=truststore-password=conduktor
 
 kubectl -n conduktor \
-    create secret generic keystore-passwords \
-        --from-literal=client-passwords=admin-secret
+    create secret generic client-passwords \
+        --from-literal=client-passwords=admin-secret \
+        --from-literal=inter-broker-password=admin-secret \
+        --from-literal=controller-password=admin-secret 
 
 kubectl -n conduktor \
     create secret generic kafka-cert \
         --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks \
-        --from-file=kafka.keystore.jks=./certs/kafka.truststore.jks
+        --from-file=kafka.keystore.jks=./certs/kafka.keystore.jks
 ```
 
 ## Deploy Helm Charts
@@ -86,6 +88,9 @@ helm install \
 ```
 helm repo add conduktor https://helm.conduktor.io
 helm repo update
+```
+
+```
 helm install \
     -f ./helm/gateway-values.yml \
     gateway conduktor/conduktor-gateway
