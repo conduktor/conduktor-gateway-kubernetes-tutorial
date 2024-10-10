@@ -1,15 +1,21 @@
+fullnameOverride: gateway
+
 gateway:
   replicas: 2
   secretRef: gateway-env-vars
   env:
     # Configure connection to Kafka
-    KAFKA_BOOTSTRAP_SERVERS: kafka.conduktor.svc.cluster.local
+    KAFKA_BOOTSTRAP_SERVERS: franz-kafka.conduktor.svc.cluster.local:9092
     KAFKA_SASL_MECHANISM: PLAIN
     KAFKA_SECURITY_PROTOCOL: SASL_SSL
     # Configure Client -> Gateway
     GATEWAY_SECURITY_PROTOCOL: DELEGATED_SASL_SSL
-    GATEWAY_ADVERTISED_HOST: gateway.conduktor.svc.cluster.local
+    GATEWAY_ADVERTISED_HOST: gateway-internal.conduktor.svc.cluster.local
     GATEWAY_ROUTING_MECHANISM: host
+    GATEWAY_ADVERTISED_SNI_PORT: "9092"
+    GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
+    # see issue https://github.com/conduktor/conduktor-public-charts/issues/118
+    GATEWAY_SSL_TRUST_STORE_PATH: /etc/gateway/tls/kafka.truststore.jks # use kafka.truststore.jks since it is the one that trusts the Kafka brokers
   portRange:
     start: 9092
     count: 1

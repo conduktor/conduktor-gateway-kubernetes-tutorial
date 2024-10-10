@@ -29,4 +29,3 @@ tls:
   sslClientAuth: "none"
   existingSecret: "kafka-cert"
   passwordsSecret: "keystore-passwords"
-
