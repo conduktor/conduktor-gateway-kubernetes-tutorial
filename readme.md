@@ -79,7 +79,7 @@ kubectl -n conduktor \
 kubectl -n conduktor \
     create secret generic gateway-cert \
         --from-file=keystore.jks=./certs/gateway.keystore.jks \
-        --from-file=truststore.jks=./certs/kafka.truststore.jks
+        --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks
 
 kubectl -n conduktor \
     create secret generic gateway-env-vars \
@@ -111,8 +111,34 @@ helm install \
     gateway conduktor/conduktor-gateway
 ```
 
+```
+kcat -L -b franz-kafka.conduktor.svc.cluster.local:9092 \
+    -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
+    -X sasl.password=admin-secret -X sasl.username=admin \
+    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
+```
+
+```
+kcat -L -b gateway-internal.conduktor.svc.cluster.local:9092 \
+    -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
+    -X sasl.password=admin-secret -X sasl.username=admin \
+    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
+```
+
 
 For some reason, Java clients need to run with this env var set:
 ```
 export KAFKA_OPTS="-Djava.security.manager=allow"
+```
+
+```
+kafka-topics --list \
+  --bootstrap-server franz-kafka.conduktor.svc.cluster.local:9092 \
+  --command-config client.properties
+```
+
+```
+kafka-topics --list \
+  --bootstrap-server gateway-internal.conduktor.svc.cluster.local:9092 \
+  --command-config client.properties
 ```
