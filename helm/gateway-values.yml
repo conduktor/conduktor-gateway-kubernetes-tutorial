@@ -17,6 +17,8 @@ gateway:
     # see issue https://github.com/conduktor/conduktor-public-charts/issues/118
     # Uses the Kafka truststore to trust Kafka
     GATEWAY_SSL_TRUST_STORE_PATH: /etc/gateway/tls/kafka.truststore.jks
+    # Enhanced logging
+    LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug
   portRange:
     start: 9092
     count: 1
@@ -24,3 +26,4 @@ gateway:
 tls:
   enable: true
   secretRef: gateway-cert
+  keystoreFile: gateway.keystore.jks
