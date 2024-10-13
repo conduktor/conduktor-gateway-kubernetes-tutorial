@@ -30,6 +30,7 @@ tls:
   existingSecret: "kafka-cert"
   passwordsSecret: "keystore-passwords"
 
-extraEnvVars:
-  - name: KAFKA_OPTS
-    value: "-Djavax.net.debug=ssl,sasl"
+## For debugging
+# extraEnvVars:
+#   - name: KAFKA_OPTS
+#     value: "-Djavax.net.debug=ssl,sasl"
