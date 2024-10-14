@@ -11,7 +11,7 @@ gateway:
     KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/gateway/tls/truststore/kafka.truststore.jks
     # Configure Client -> Gateway
     GATEWAY_SECURITY_PROTOCOL: DELEGATED_SASL_SSL
-    GATEWAY_ADVERTISED_HOST: gateway-internal.conduktor.svc.cluster.local
+    GATEWAY_ADVERTISED_HOST: gateway.k8s.orb.local
     GATEWAY_ROUTING_MECHANISM: host
     GATEWAY_ADVERTISED_SNI_PORT: "9092"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
@@ -32,9 +32,13 @@ gateway:
       mountPath: /etc/gateway/tls/truststore/
       readonly: true
 
-
 tls:
   enable: true
   secretRef: gateway-cert
   keystoreFile: gateway.keystore.jks
   keystoreKey: gateway.keystore.jks
+
+service:
+  external:
+    enable: true
+    type: LoadBalancer

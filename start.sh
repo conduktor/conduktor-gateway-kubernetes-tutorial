@@ -50,3 +50,5 @@ helm install \
 helm upgrade \
     --install ingress-nginx ingress-nginx/ingress-nginx \
     --set controller.extraArgs.enable-ssl-passthrough="true"
+
+kubectl apply -f ingress.yml
