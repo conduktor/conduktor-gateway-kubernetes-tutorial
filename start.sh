@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Create shared namespace
 kubectl create namespace conduktor
 
+########################
+# Create kubernetes secrets for Kafka
 kubectl -n conduktor \
     create secret generic keystore-passwords \
         --from-literal=keystore-password=conduktor \
@@ -17,6 +20,8 @@ kubectl -n conduktor \
     create secret generic kafka-cert \
         --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks \
         --from-file=kafka.keystore.jks=./certs/kafka.keystore.jks
+########################
+# Create kubernetes secrets for Gateway
 
 # Use gateway.keystore.jks since that has the cert for Gateway.
 # Use kafka.truststore.jks since that is the one that trusts the Kafka cert.
@@ -32,23 +37,30 @@ kubectl -n conduktor \
         --from-literal=GATEWAY_SSL_KEY_PASSWORD=conduktor \
         --from-literal=KAFKA_SSL_TRUSTSTORE_PASSWORD=conduktor
 
+########################
+# Install components
 
+# Install Kafka via Bitnami's Kafka helm chart
 helm install \
     -f ./helm/kafka-values.yml \
     -n conduktor \
     franz oci://registry-1.docker.io/bitnamicharts/kafka
 
+# Add helm repos
 helm repo add conduktor https://helm.conduktor.io
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
+# Install Gateway
 helm install \
     -f ./helm/gateway-values.yml \
     -n conduktor \
     gateway conduktor/conduktor-gateway
 
+# Install Ingress Controller
 helm upgrade \
     --install ingress-nginx ingress-nginx/ingress-nginx \
     --set controller.extraArgs.enable-ssl-passthrough="true"
 
+# Create Ingress for Gateway
 kubectl apply -f ingress.yml
