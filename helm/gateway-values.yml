@@ -17,6 +17,7 @@ gateway:
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
     # # Enhanced logging
     # LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug
+    LOG4J2_IO_CONDUKTOR_PROXY_NETWORK_LEVEL: trace
   portRange:
     start: 9092
     count: 1

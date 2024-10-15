@@ -15,7 +15,7 @@ spec:
         - gateway.k8s.orb.local
         - "*.gateway.k8s.orb.local"
   rules:
-    - host: gateway-external.k8s.orb.local
+    - host: gateway.k8s.orb.local
       http:
         paths:
           - path: /

@@ -38,7 +38,7 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
     ```bash
-    openssl x509 -in ./certs/gateway.certificate.pem -text -noout
+    openssl x509 -in ./certs/gateway-ca1-signed.crt -text -noout
     ```
     [!IMPORTANT] Notice the Subject Alternate Names (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Gateway can present a different hostname for each Kafka broker, which makes it possible to route Kafka client traffic through to the correct broker based solely on hostname rather than requiring a separate Gateway port per broker.
 
@@ -61,34 +61,58 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 
 ## Connect
 
+### Java client
+
+For some reason, Java clients need to run with this env var set:
+```bash
+export KAFKA_OPTS="-Djava.security.manager=allow"
 ```
+You can also add ` -Djavax.net.debug=ssl` to enable ssl debug messages.
+
+```bash
+kafka-topics --list \
+  --bootstrap-server franz-kafka.conduktor.svc.cluster.local:9092 \
+  --command-config client.properties
+```
+
+```bash
+kafka-topics --list \
+  --bootstrap-server gateway.k8s.orb.local:9092 \
+  --command-config client.properties
+```
+
+```
+kafka-topics --bootstrap-server gateway.k8s.orb.local:9092 \
+    --create --topic test --partitions 6 \
+    --command-config client.properties
+```
+
+### Librdkafka
+
+```bash
 kcat -L -b franz-kafka.conduktor.svc.cluster.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/snakeoil-ca-1.crt
 ```
 
-```
-kcat -L -b gateway-internal.conduktor.svc.cluster.local:9092 \
+```bash
+kcat -L -b gateway.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/snakeoil-ca-1.crt
 ```
 
-
-For some reason, Java clients need to run with this env var set:
-```
-export KAFKA_OPTS="-Djava.security.manager=allow"
-```
-
-```
-kafka-topics --list \
-  --bootstrap-server franz-kafka.conduktor.svc.cluster.local:9092 \
-  --command-config client.properties
+```bash
+echo "hello1" | kcat -t test -P -b gateway.k8s.orb.local:9092 \
+    -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
+    -X sasl.password=admin-secret -X sasl.username=admin \
+    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
 ```
 
-```
-kafka-topics --list \
-  --bootstrap-server gateway-internal.conduktor.svc.cluster.local:9092 \
-  --command-config client.properties
+```bash
+kcat -t test -C -b gateway.k8s.orb.local:9092 \
+    -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
+    -X sasl.password=admin-secret -X sasl.username=admin \
+    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
 ```
