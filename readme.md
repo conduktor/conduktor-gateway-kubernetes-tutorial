@@ -1,18 +1,36 @@
 # Deploy Conduktor Gateway with Kubernetes and Host-based Routing
 
-[!WARNING] Under construction. Coming soon.
-
 ## Introduction and Concepts
 
+The default way Conduktor Gateway routes traffic to Kafka brokers is with port-based routing.
+Each Gateway instance opens a port for each broker.
+
 <div style="text-align: center;">
-  <img src="./architecture.png" width="75%">
+  <img src="./port-based.png" width="90%">
 </div>
 
+However, this can cause complications when the number of brokers changes.
+Gateway is happy to automatically expose more ports, but firewalls and load balancer targets would require reconfiguration.
+This is especially problematic when using a managed Kafka service where the number of brokers can change without warning.
+
+One way to solve this is with host-based routing, also known as Server Name Indication (SNI) routing.
+SNI routing allows Gateway expose a single port and route requests to individual brokers based on hostname rather than port ([see SNI routing guide in the docs](https://docs.conduktor.io/gateway/how-to/sni-routing/) for more information).
+
+This tutorial sets up SNI routing specifically for a Kubernetes cluster that exposes Gateway to clients externally via an Ingress.
+Kubernetes has its own networking concepts, so it is helpful to see an example for how SNI routing works for Conduktor Gateway deployed on Kubernetes specifically.
+
+Here is an overview of what we will deploy:
+
+<div style="text-align: center;">
+  <img src="./architecture.png" width="90%">
+</div>
 
 
 ## Setup
 
-I am running this tutorial on a Mac using Orbstack, which helps to run end-to-end authentically without incurring a cloud bill.
+To run this all locally, I will use [OrbStack](https://orbstack.dev/), a container and VM management tool for Mac only (sorry!).
+I chose OrbStack specifically because this tutorial aims to show how external clients will connect via an Ingress Controller, which can otherwise be difficult to do without either running up a cloud bill or sacrificing authenticity compared to a real-world deployment.
+OrbStack has some networking magic that makes the entire tutorial run locally without sacrificing authenticity.
 
 1. Install homebrew at [https://brew.sh/](https://brew.sh/).
 1. Install `helm` and `orbstack` and a few other things.
@@ -23,7 +41,7 @@ I am running this tutorial on a Mac using Orbstack, which helps to run end-to-en
 
     [Orbstack](https://orbstack.dev/) is a management system for containers and Linux VMs that makes it convenient to run Kubernetes locally, among other things.
 
-    Openjdk is a Java runtime. This is required to use the `keytool` command to generate keystores and truststore for certificates. You may need to add it to your `PATH` in your shell profile for the shell to properly locate and execute the program. For example, add the following line to your `~/.zshrc` profile:
+    Openjdk is a Java runtime. This is required to use the `keytool` command to generate keystores and truststore for certificates, as well as Kafka CLI tools. You may need to add it to your `PATH` in your shell profile for the shell to properly locate and execute the program. For example, add the following line to your `~/.zshrc` profile:
     ```bash
     export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
     ```
@@ -75,8 +93,9 @@ A lot happens here:
 - Install `ingress-nginx` Ingress Controller
 - Create Ingress for Gateway
 
+Inspect the start script, helm values, and ingress definition.
 
-## Connect
+## Connect to Gateway
 
 In newer JDKs, Java clients need to run with this env var set (see [KIP 1006](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1006%3A+Remove+SecurityManager+Support)):
 ```bash
@@ -92,13 +111,18 @@ kafka-broker-api-versions \
     --command-config client.properties
 ```
 
-Look at metadata returned by Gateway.
+**NOTE**: The above uses a bit of OrbStack magic to reach an internal service from your laptop.
+Usually you would only be able to reach an internal service from a pod within the kubernetes cluster.
+
+Look at metadata returned by Gateway, accessed externally.
 
 ```bash
 kafka-broker-api-versions \
-    --bootstrap-server franz-kafka.conduktor.svc.cluster.local:9092 \
+    --bootstrap-server gateway.k8s.orb.local:9092 \
     --command-config client.properties
 ```
+
+**NOTE**: OrbStack allows you to reach external services using the `*.k8s.orb.local` domain via Ingress Controller.
 
 Create a topic (going through Gateway).
 
