@@ -164,6 +164,19 @@ kafka-console-consumer --topic test --from-beginning \
   --consumer.config client.properties
 ```
 
+## Cleanup
+
+Clean up kubernetes resources.
+
+```bash
+kubectl delete namespace conduktor
+```
+
+Or for convenience,
+
+```bash
+./stop.sh
+```
 
 ## Takeaways
 
@@ -175,7 +188,7 @@ kafka-console-consumer --topic test --from-beginning \
     - `brokermain0.gateway.k8s.orb.local`
     - `brokermain1.gateway.k8s.orb.local`
     - `brokermain2.gateway.k8s.orb.local`
-    - In the future, as brokers are added or subtracted, `*.gateway.k8s.orb.local` as needed
+    - As brokers are added, any `brokermain<broker id>.gateway.k8s.orb.local` will be routed automatically without requiring changes elsewhere in the infrastructure.
 - Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. Wildcard SAN is easiest, which in this example is `*.gateway.k8s.orb.local`.
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
 

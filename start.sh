@@ -1,5 +1,7 @@
 #!/bin/bash
 
+orb start k8s
+
 # Create shared namespace
 kubectl create namespace conduktor
 
