@@ -35,7 +35,7 @@ OrbStack has some networking magic that makes the entire tutorial run locally wi
 1. Install homebrew at [https://brew.sh/](https://brew.sh/).
 1. Install `helm` and `orbstack` and a few other things.
     ```
-    brew instal helm orbstack openssl openjdk kafka
+    brew instal helm orbstack openssl openjdk kafka conduktor-cli
     ```
     [Helm](https://helm.sh/) is a package manager for Kubernetes.
 
@@ -75,7 +75,6 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
     - Creates a truststore that clients can use to validate the identity of any service's certificate that has been signed by the CA
 
 
-
 ## Deploy
 
 Deploy Kafka and Gateway.
@@ -92,10 +91,30 @@ A lot happens here:
 - Install Gateway via Conduktor's helm chart
 - Install `ingress-nginx` Ingress Controller
 - Create Ingress for Gateway
+- Configure environment variables for the `conduktor` CLI
 
 Inspect the start script, helm values, and ingress definition.
 
 ## Connect to Gateway
+
+Connect to the admin API (no errors means it worked!).
+
+```bash
+export CDK_CACERT=certs/snakeoil-ca-1.crt
+export CDK_GATEWAY_BASE_URL=https://gateway.k8s.orb.local:8888
+export CDK_GATEWAY_USER=admin
+export CDK_GATEWAY_PASSWORD=conduktor
+conduktor get interceptor
+```
+
+Or equivalent REST API call.
+```bash
+curl \
+    --request GET \
+    --url 'https://gateway.k8s.orb.local:8888/gateway/v2/interceptor?global=false' \
+    --user "admin:conduktor" \
+    --cacert ./certs/snakeoil-ca-1.crt
+```
 
 In newer JDKs, Java clients need to run with this env var set (see [KIP 1006](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1006%3A+Remove+SecurityManager+Support)):
 ```bash

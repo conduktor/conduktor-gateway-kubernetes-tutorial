@@ -25,6 +25,20 @@ spec:
                 name: gateway-external
                 port: 
                   number: 9092
+          - path: /gateway/v2
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-external
+                port:
+                  number: 8888
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway-external
+                port:
+                  number: 8888
     - host: "*.gateway.k8s.orb.local"
       http:
         paths:

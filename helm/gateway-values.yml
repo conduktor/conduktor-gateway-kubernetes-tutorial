@@ -1,6 +1,7 @@
 fullnameOverride: gateway
 
 gateway:
+  # startupProbeDelay: 10000
   replicas: 2
   secretRef: gateway-env-vars
   env:
@@ -15,9 +16,11 @@ gateway:
     GATEWAY_ROUTING_MECHANISM: host
     GATEWAY_ADVERTISED_SNI_PORT: "9092"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
+    GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.keystore.jks
     # # Enhanced logging
     # LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug
     # LOG4J2_IO_CONDUKTOR_PROXY_NETWORK_LEVEL: debug
+    # LOG4J2_IO_NETTY_LEVEL: debug
   portRange:
     start: 9092
     count: 1
@@ -43,3 +46,4 @@ service:
   external:
     enable: true
     type: LoadBalancer
+    admin: true

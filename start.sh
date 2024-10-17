@@ -37,6 +37,7 @@ kubectl -n conduktor \
         --from-literal=KAFKA_SASL_JAAS_CONFIG='org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";' \
         --from-literal=GATEWAY_SSL_KEY_STORE_PASSWORD=conduktor \
         --from-literal=GATEWAY_SSL_KEY_PASSWORD=conduktor \
+        --from-literal=GATEWAY_HTTPS_KEY_STORE_PASSWORD=conduktor \
         --from-literal=KAFKA_SSL_TRUSTSTORE_PASSWORD=conduktor
 
 ########################
@@ -66,3 +67,14 @@ helm upgrade \
 
 # Create Ingress for Gateway
 kubectl apply -f ingress.yml
+
+# Patch liveness and startup probes of the gateway deployment to use HTTPS
+kubectl patch deployment gateway \
+  -n conduktor \
+  --type=json \
+  -p='[{"op": "add", "path": "/spec/template/spec/containers/0/startupProbe/httpGet/scheme", "value":"HTTPS"}]'
+
+kubectl patch deployment gateway \
+  -n conduktor \
+  --type=json \
+  -p='[{"op": "add", "path": "/spec/template/spec/containers/0/livenessProbe/httpGet/scheme", "value":"HTTPS"}]'
