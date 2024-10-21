@@ -15,6 +15,7 @@ gateway:
     GATEWAY_ADVERTISED_HOST: gateway.k8s.orb.local
     GATEWAY_ROUTING_MECHANISM: host
     GATEWAY_ADVERTISED_SNI_PORT: "9092"
+    GATEWAY_SNI_HOST_SEPARATOR: "." # e.g. "brokermain0" + "." + "gateway.k8s.orb.local"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
     GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.keystore.jks
     # # Enhanced logging

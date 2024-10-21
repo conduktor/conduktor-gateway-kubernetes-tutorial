@@ -35,7 +35,13 @@ OrbStack has some networking magic that makes the entire tutorial run locally wi
 1. Install homebrew at [https://brew.sh/](https://brew.sh/).
 1. Install `helm` and `orbstack` and a few other things.
     ```
-    brew instal helm orbstack openssl openjdk kafka conduktor-cli
+    brew install \
+        helm \
+        orbstack \
+        openssl \
+        openjdk \
+        kafka \
+        conduktor-cli
     ```
     [Helm](https://helm.sh/) is a package manager for Kubernetes.
 
@@ -91,7 +97,6 @@ A lot happens here:
 - Install Gateway via Conduktor's helm chart
 - Install `ingress-nginx` Ingress Controller
 - Create Ingress for Gateway
-- Configure environment variables for the `conduktor` CLI
 
 Inspect the start script, helm values, and ingress definition.
 
