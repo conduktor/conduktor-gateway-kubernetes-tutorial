@@ -1,6 +1,19 @@
 # Deploy Conduktor Gateway with Kubernetes and Host-based Routing
 
+## Video Walkthrough
+
+Here is a full walkthrough tutorial.
+
+[![walkthrough tutorial](https://img.youtube.com/vi/u4tMiWcxRvo/0.jpg)](https://youtu.be/u4tMiWcxRvo).
+
 ## Introduction and Concepts
+
+Conduktor Gateway is a Kafka protocol proxy with an extensive catalog of [interceptor plugins](https://docs.conduktor.io/gateway/category/interceptor-catalog/) to centrally enforce policies like 
+- schema payload validation
+- business rule validation
+- field-level encryption and field-level decryption
+- client configuration overrides
+- many more!
 
 The default way Conduktor Gateway routes traffic to Kafka brokers is with port-based routing.
 Each Gateway instance opens a port for each broker.
