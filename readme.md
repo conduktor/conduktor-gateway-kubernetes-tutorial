@@ -83,7 +83,7 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
     ```bash
     openssl x509 -in ./certs/gateway-ca1-signed.crt -text -noout
     ```
-    **IMPORTANT:** Notice the Subject Alternate Names (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Gateway can present a different hostname for each Kafka broker, which makes it possible to route Kafka client traffic through to the correct broker based solely on hostname rather than requiring a separate Gateway port per broker.
+    **IMPORTANT:** Notice the Subject Alternate Names (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to. Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0.gateway.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0.gateway.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
 
 
 1. (Optional) Inspect the `generate-tls.sh` script to see how it
@@ -115,7 +115,7 @@ Inspect the start script, helm values, and ingress definition.
 
 ## Connect to Gateway
 
-Connect to the admin API (no errors means it worked!).
+Connect to the admin API (no output with no errors means it worked!).
 
 ```bash
 export CDK_CACERT=certs/snakeoil-ca-1.crt
@@ -125,7 +125,7 @@ export CDK_GATEWAY_PASSWORD=conduktor
 conduktor get interceptor
 ```
 
-Or equivalent REST API call.
+Or equivalent REST API call, which should receive a successful response with an empy list.
 ```bash
 curl \
     --request GET \
