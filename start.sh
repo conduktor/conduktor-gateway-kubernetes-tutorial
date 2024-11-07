@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [ ! -f ./certs/kafka.truststore.jks ]; then
+    echo "create the keystore files before running this script"
+    exit;    
+fi
+
+
+
 orb start k8s
 
 # Create shared namespace
