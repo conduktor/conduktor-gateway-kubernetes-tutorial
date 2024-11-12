@@ -19,7 +19,7 @@ The default way Conduktor Gateway routes traffic to Kafka brokers is with port-b
 Each Gateway instance opens a port for each broker.
 
 <div style="text-align: center;">
-  <img src="./port-based.png" width="90%">
+  <img src="./port-based.jpg">
 </div>
 
 However, this can cause complications when the number of brokers changes.
@@ -35,7 +35,7 @@ Kubernetes has its own networking concepts, so it is helpful to see an example f
 Here is an overview of what we will deploy:
 
 <div style="text-align: center;">
-  <img src="./architecture.png" width="90%">
+  <img src="./architecture.jpg">
 </div>
 
 
