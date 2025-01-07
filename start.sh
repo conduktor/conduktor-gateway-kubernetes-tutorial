@@ -74,14 +74,3 @@ helm upgrade \
 
 # Create Ingress for Gateway
 kubectl apply -f ingress.yml
-
-# Patch liveness and startup probes of the gateway deployment to use HTTPS
-kubectl patch deployment gateway \
-  -n conduktor \
-  --type=json \
-  -p='[{"op": "add", "path": "/spec/template/spec/containers/0/startupProbe/httpGet/scheme", "value":"HTTPS"}]'
-
-kubectl patch deployment gateway \
-  -n conduktor \
-  --type=json \
-  -p='[{"op": "add", "path": "/spec/template/spec/containers/0/livenessProbe/httpGet/scheme", "value":"HTTPS"}]'
