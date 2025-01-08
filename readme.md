@@ -75,16 +75,17 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 - between Kafka clients and Conduktor Gateway
 - between Conduktor Gateway and Kafka
 
-1. Run the following script to generate the keystores and truststore.
+1. Run the following scripts to generate the keystores and truststore.
 
     ```bash
     ./generate-tls.sh
+    ./scratch.sh
     ```
 
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
     ```bash
     openssl x509 \
-        -in ./certs/gateway.conduktor.k8s.orb.local-ca1-signed.crt \
+        -in ./certs/conduktor.k8s.orb.local-ca1-signed.crt \
         -text -noout
     ```
     ```
@@ -95,33 +96,18 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
             ...
             Subject:
                 C=UK, L=LONDON, O=CONDUKTOR, OU=TEST,
-                CN=gateway.conduktor.k8s.orb.local
+                CN=*.conduktor.k8s.orb.local
             ...
-            X509v3 extensions:
-                ...
-                X509v3 Subject Alternative Name:
-                    DNS:gateway.conduktor.k8s.orb.local, 
-                    DNS:brokermain0-gateway.conduktor.k8s.orb.local,
-                    DNS:brokermain1-gateway.conduktor.k8s.orb.local,
-                    DNS:brokermain2-gateway.conduktor.k8s.orb.local
+
     ```
-    **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
+    **IMPORTANT:** Notice the **wildcard CN** `*.conduktor.k8s.orb.local` that allows Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
 
-    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
+    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a wildcard DNS record for `*.conduktor.k8s.orb.local` pointing to the load balancer IP.
     
-    Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
-
-    We recommend overprovisioning these SANs, for example with brokermain0 through brokermain200. This allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
+    Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
     
-    Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`, as well as matching DNS resolution. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
+    The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
 
-
-1. (Optional) Inspect the `generate-tls.sh` script to see how it
-    - Creates a certificate authority (CA)
-    - Creates a CA cert
-    - Uses the CA cert to create service certificates for Kafka and Conduktor Gateway
-    - Constructs Subject Alternate Names (SANs) to allow Gateway to present to clients as any broker.
-    - Creates a truststore that clients can use to validate the identity of any service's certificate that has been signed by the CA
 
 
 ## Deploy

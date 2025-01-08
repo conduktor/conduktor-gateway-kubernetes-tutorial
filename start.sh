@@ -36,7 +36,7 @@ kubectl -n conduktor \
 # Use kafka.truststore.jks since that is the one that trusts the Kafka cert.
 kubectl -n conduktor \
     create secret generic gateway-cert \
-        --from-file=gateway.conduktor.k8s.orb.local.keystore.jks=./certs/gateway.conduktor.k8s.orb.local.keystore.jks \
+        --from-file=conduktor.k8s.orb.local.keystore.jks=./certs/conduktor.k8s.orb.local.keystore.jks \
         --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks
 
 kubectl -n conduktor \
