@@ -6,6 +6,8 @@ Here is a full walkthrough tutorial.
 
 [![walkthrough tutorial](https://img.youtube.com/vi/u4tMiWcxRvo/0.jpg)](https://youtu.be/u4tMiWcxRvo).
 
+Note that the video uses wildcard SANs. This repository has since been updated not to use wildcard SANs in order to reflect security best practices.
+
 ## Introduction and Concepts
 
 Conduktor Gateway is a Kafka protocol proxy with an extensive catalog of [interceptor plugins](https://docs.conduktor.io/gateway/category/interceptor-catalog/) to centrally enforce policies like 
