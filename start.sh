@@ -32,11 +32,11 @@ kubectl -n conduktor \
 ########################
 # Create kubernetes secrets for Gateway
 
-# Use gateway.keystore.jks since that has the cert for Gateway.
+# Use gateway.conduktor.k8s.orb.local.keystore.jks since that has the cert for Gateway.
 # Use kafka.truststore.jks since that is the one that trusts the Kafka cert.
 kubectl -n conduktor \
     create secret generic gateway-cert \
-        --from-file=gateway.keystore.jks=./certs/gateway.keystore.jks \
+        --from-file=gateway.conduktor.k8s.orb.local.keystore.jks=./certs/gateway.conduktor.k8s.orb.local.keystore.jks \
         --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks
 
 kubectl -n conduktor \
@@ -71,6 +71,19 @@ helm install \
 helm upgrade \
     --install ingress-nginx ingress-nginx/ingress-nginx \
     --set controller.extraArgs.enable-ssl-passthrough="true"
+
+echo "Waiting for the ingress-nginx LoadBalancer IP to be available..."
+
+# Wait for the admission webhook service to have endpoints
+while true; do
+    ENDPOINTS=$(kubectl get endpoints --namespace default ingress-nginx-controller-admission -o jsonpath='{.subsets[0].addresses}')
+    if [[ -n "$ENDPOINTS" ]]; then
+        echo "Admission webhook service is ready!"
+        break
+    fi
+    echo "Waiting for admission webhook service to be ready..."
+    sleep 1
+done
 
 # Create Ingress for Gateway
 kubectl apply -f ingress.yml

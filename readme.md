@@ -35,7 +35,7 @@ Kubernetes has its own networking concepts, so it is helpful to see an example f
 Here is an overview of what we will deploy:
 
 <div style="text-align: center;">
-  <img src="./architecture.jpg">
+  <img src="./architecture.png">
 </div>
 
 
@@ -81,9 +81,37 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
     ```bash
-    openssl x509 -in ./certs/gateway-ca1-signed.crt -text -noout
+    openssl x509 \
+        -in ./certs/gateway.conduktor.k8s.orb.local-ca1-signed.crt \
+        -text -noout
     ```
-    **IMPORTANT:** Notice the Subject Alternate Names (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to. Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0.gateway.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0.gateway.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
+    ```
+    Certificate:
+        Data:
+            ...
+            Issuer: CN=ca1.test.conduktor.io, OU=TEST, O=CONDUKTOR, L=LONDON, C=UK
+            ...
+            Subject:
+                C=UK, L=LONDON, O=CONDUKTOR, OU=TEST,
+                CN=gateway.conduktor.k8s.orb.local
+            ...
+            X509v3 extensions:
+                ...
+                X509v3 Subject Alternative Name:
+                    DNS:gateway.conduktor.k8s.orb.local, 
+                    DNS:brokermain0-gateway.conduktor.k8s.orb.local,
+                    DNS:brokermain1-gateway.conduktor.k8s.orb.local,
+                    DNS:brokermain2-gateway.conduktor.k8s.orb.local
+    ```
+    **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
+
+    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
+    
+    Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
+
+    We recommend overprovisioning these SANs, for example with brokermain0 through brokermain200. This allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
+    
+    Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`, as well as matching DNS resolution. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
 
 
 1. (Optional) Inspect the `generate-tls.sh` script to see how it
@@ -115,23 +143,17 @@ Inspect the start script, helm values, and ingress definition.
 
 ## Connect to Gateway
 
-Connect to the admin API (no output with no errors means it worked!).
-
-```bash
-export CDK_CACERT=certs/snakeoil-ca-1.crt
-export CDK_GATEWAY_BASE_URL=https://gateway.k8s.orb.local:8888
-export CDK_GATEWAY_USER=admin
-export CDK_GATEWAY_PASSWORD=conduktor
-conduktor get interceptor
-```
-
-Or equivalent REST API call, which should receive a successful response with an empy list.
+Connect to the adminREST API call, which should receive a successful response with an empty list.
 ```bash
 curl \
     --request GET \
-    --url 'https://gateway.k8s.orb.local:8888/gateway/v2/interceptor?global=false' \
+    --url 'https://gateway.conduktor.k8s.orb.local:8888/gateway/v2/interceptor?global=false' \
     --user "admin:conduktor" \
     --cacert ./certs/snakeoil-ca-1.crt
+```
+```
+[
+]%
 ```
 
 In newer JDKs, Java clients need to run with this env var set (see [KIP 1006](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1006%3A+Remove+SecurityManager+Support)):
@@ -155,7 +177,7 @@ Look at metadata returned by Gateway, accessed externally.
 
 ```bash
 kafka-broker-api-versions \
-    --bootstrap-server gateway.k8s.orb.local:9092 \
+    --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
     --command-config client.properties
 ```
 
@@ -164,7 +186,7 @@ kafka-broker-api-versions \
 Create a topic (going through Gateway).
 
 ```bash
-kafka-topics --bootstrap-server gateway.k8s.orb.local:9092 \
+kafka-topics --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
     --create --topic test --partitions 6 \
     --command-config client.properties
 ```
@@ -181,7 +203,7 @@ List topics (going through Gateway).
 
 ```bash
 kafka-topics --list \
-  --bootstrap-server gateway.k8s.orb.local:9092 \
+  --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
   --command-config client.properties
 ```
 
@@ -189,15 +211,15 @@ Produce to the topic (going through Gateway).
 
 ```bash
 echo "hello" | kafka-console-producer --topic test \
-  --bootstrap-server gateway.k8s.orb.local:9092 \
+  --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
   --producer.config client.properties
 ```
 
-Consume from the topic (going through Gateway).
+Consume from the topic (going through Gateway). Press `Ctrl+C` to quit.
 
 ```bash
 kafka-console-consumer --topic test --from-beginning \
-  --bootstrap-server gateway.k8s.orb.local:9092 \
+  --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
   --consumer.config client.properties
 ```
 
@@ -209,7 +231,7 @@ Clean up kubernetes resources.
 kubectl delete namespace conduktor
 ```
 
-Or for convenience,
+If you also want to delete the Ingress controller, 
 
 ```bash
 ./stop.sh
@@ -221,12 +243,13 @@ Or for convenience,
     - For AWS EKS this would mean using the Load Balancer Controller with Network Load Balancer (NLB).
     - TLS passthrough is required so that Gateway can use the SNI headers in the TLS handshake to route requests to specific brokers. 
 - Your client must be able to resolve all hosts advertised by Gateway to the external load balancer. In this example, OrbStack magically points all `*.k8s.orb.local` to the ingress-nginx Ingress Controller, and the Ingress we defined points these hosts to the `gateway-external` service:
-    - `gateway.k8s.orb.local`
-    - `brokermain0.gateway.k8s.orb.local`
-    - `brokermain1.gateway.k8s.orb.local`
-    - `brokermain2.gateway.k8s.orb.local`
-    - As brokers are added, any `brokermain<broker id>.gateway.k8s.orb.local` will be routed automatically without requiring changes elsewhere in the infrastructure.
-- Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. Wildcard SAN is easiest, which in this example is `*.gateway.k8s.orb.local`.
+    - `gateway.conduktor.k8s.orb.local`
+    - `brokermain0-gateway.conduktor.k8s.orb.local`
+    - `brokermain1-gateway.conduktor.k8s.orb.local`
+    - `brokermain2-gateway.conduktor.k8s.orb.local`
+    - As brokers are added, any `brokermain<broker id>-gateway.conduktor.k8s.orb.local` will be routed automatically without requiring changes elsewhere in the infrastructure.
+- Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. 
+  - Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
 
 ## Appendix
@@ -243,21 +266,21 @@ kcat -L -b franz-kafka.conduktor.svc.cluster.local:9092 \
 ```
 
 ```bash
-kcat -L -b gateway.k8s.orb.local:9092 \
+kcat -L -b gateway.conduktor.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/snakeoil-ca-1.crt
 ```
 
 ```bash
-echo "hello1" | kcat -t test -P -b gateway.k8s.orb.local:9092 \
+echo "hello1" | kcat -t test -P -b gateway.conduktor.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/snakeoil-ca-1.crt
 ```
 
 ```bash
-kcat -t test -C -b gateway.k8s.orb.local:9092 \
+kcat -t test -C -b gateway.conduktor.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/snakeoil-ca-1.crt

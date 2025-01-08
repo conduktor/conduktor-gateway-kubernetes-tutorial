@@ -13,7 +13,7 @@ create_certificate_per_user() {
 
     shift
     declare -a subject_alt_names
-    subject_alt_names+=("$user" "localhost")
+    subject_alt_names+=("$user")
 
     # additional alt names if any
     for additional_san in "$@"
@@ -134,4 +134,4 @@ generate_truststore() {
 clean_certificates
 generate_ca_cert
 generate_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
-generate_certificate gateway gateway-internal.conduktor.svc.cluster.local gateway.k8s.orb.local *.gateway.k8s.orb.local
+generate_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
