@@ -134,4 +134,4 @@ generate_truststore() {
 clean_certificates
 generate_ca_cert
 generate_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
-generate_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
+generate_certificate gateway.conduktor.k8s.orb.local *.conduktor.k8s.orb.local

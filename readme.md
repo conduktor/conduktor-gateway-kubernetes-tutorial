@@ -79,13 +79,12 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 
     ```bash
     ./generate-tls.sh
-    ./scratch.sh
     ```
 
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
     ```bash
     openssl x509 \
-        -in ./certs/conduktor.k8s.orb.local-ca1-signed.crt \
+        -in ./certs/gateway.conduktor.k8s.orb.local-ca1-signed.crt \
         -text -noout
     ```
     ```
@@ -94,13 +93,13 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
             ...
             Issuer: CN=ca1.test.conduktor.io, OU=TEST, O=CONDUKTOR, L=LONDON, C=UK
             ...
-            Subject:
-                C=UK, L=LONDON, O=CONDUKTOR, OU=TEST,
-                CN=*.conduktor.k8s.orb.local
+            X509v3 Subject Alternative Name: 
+                DNS:gateway.conduktor.k8s.orb.local,
+                DNS:*.conduktor.k8s.orb.local
             ...
 
     ```
-    **IMPORTANT:** Notice the **wildcard CN** `*.conduktor.k8s.orb.local` that allows Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
+    **IMPORTANT:** Notice the **wildcard SAN** `*.conduktor.k8s.orb.local` that allows Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to. Be aware that not all certificate issuers allow wildcard SANs.
 
     OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a wildcard DNS record for `*.conduktor.k8s.orb.local` pointing to the load balancer IP.
     
