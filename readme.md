@@ -111,10 +111,10 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
     
     Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
 
-    We recommend overprovisioning these SANs, for example with brokermain0 through brokermain200. This allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
+    We recommend using a certificate with a wildcard SAN, which in this case would be `*.conduktor.k8s.orb.local`, as well as the matching DNS wilcard CNAME alias. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
     
-    Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`, as well as matching DNS resolution. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
-
+    If your certificate issuer or security team doesn't support wildcard SANs, then you can overprovision these SANs and DNS CNAME aliases, for example with brokermain0 through brokermain200.
+    
 
 1. (Optional) Inspect the `generate-tls.sh` script to see how it
     - Creates a certificate authority (CA)
