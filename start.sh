@@ -45,7 +45,8 @@ kubectl -n conduktor \
         --from-literal=GATEWAY_SSL_KEY_STORE_PASSWORD=conduktor \
         --from-literal=GATEWAY_SSL_KEY_PASSWORD=conduktor \
         --from-literal=GATEWAY_HTTPS_KEY_STORE_PASSWORD=conduktor \
-        --from-literal=KAFKA_SSL_TRUSTSTORE_PASSWORD=conduktor
+        --from-literal=KAFKA_SSL_TRUSTSTORE_PASSWORD=conduktor \
+        --from-literal=GATEWAY_ADMIN_API_USERS='[{username: admin, password: conduktor, admin: true}]'
 
 ########################
 # Install components

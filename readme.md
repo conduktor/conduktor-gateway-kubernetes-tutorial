@@ -56,7 +56,7 @@ OrbStack has some networking magic that makes the entire tutorial run locally wi
         openssl \
         openjdk \
         kafka \
-        conduktor-cli
+        conduktor/brew/conduktor-cli
     ```
     [Helm](https://helm.sh/) is a package manager for Kubernetes.
 
