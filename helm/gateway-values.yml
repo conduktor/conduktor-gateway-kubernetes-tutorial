@@ -5,11 +5,14 @@ gateway:
   replicas: 2
   secretRef: gateway-env-vars
   env:
+    # GATEWAY_LICENSE_KEY: yourlicense
+    
     # Configure connection to Kafka
     KAFKA_BOOTSTRAP_SERVERS: franz-kafka.conduktor.svc.cluster.local:9092
     KAFKA_SASL_MECHANISM: PLAIN
     KAFKA_SECURITY_PROTOCOL: SASL_SSL
     KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/gateway/tls/truststore/kafka.truststore.jks
+    
     # Configure Client -> Gateway
     GATEWAY_SECURITY_PROTOCOL: DELEGATED_SASL_SSL
     GATEWAY_ADVERTISED_HOST: gateway.conduktor.k8s.orb.local
@@ -18,6 +21,7 @@ gateway:
     GATEWAY_SNI_HOST_SEPARATOR: "-" # e.g. "brokermain0" + "-" + "gateway.conduktor.k8s.orb.local"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
     GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.conduktor.k8s.orb.local.keystore.jks
+    
     # # Enhanced logging
     # LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug
     # LOG4J2_IO_CONDUKTOR_PROXY_NETWORK_LEVEL: debug
