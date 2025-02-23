@@ -1,12 +1,27 @@
 # Deploy Conduktor Gateway with Kubernetes and Host-based Routing
 
-## Video Walkthrough
+## Broken Stack Challenge
 
-Here is a full walkthrough tutorial.
+Common issues have been injected into this example.
+Your challenge is to find them, fix them, and get Conduktor Gateway working again.
 
-[![walkthrough tutorial](https://img.youtube.com/vi/u4tMiWcxRvo/0.jpg)](https://youtu.be/u4tMiWcxRvo).
+It's very easy to cheat by looking at the main branch or the commit history.
+Avoid cheating, but here are some hints.
 
-Note that the video uses wildcard SANs. This repository has since been updated not to use wildcard SANs in order to reflect security best practices.
+<details>
+<summary>Hint 1</summary>
+Check Gateway's truststore.
+</details>
+
+<details>
+<summary>Hint 2</summary>
+Check Gateway cert's SANs
+</details>
+
+<details>
+<summary>Hint 3</summary>
+Check sasl mechanism for GW -> Kafka connection
+</details>
 
 ## Introduction and Concepts
 
@@ -87,42 +102,6 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
         -in ./certs/gateway.conduktor.k8s.orb.local-ca1-signed.crt \
         -text -noout
     ```
-    ```
-    Certificate:
-        Data:
-            ...
-            Issuer: CN=ca1.test.conduktor.io, OU=TEST, O=CONDUKTOR, L=LONDON, C=UK
-            ...
-            Subject:
-                C=UK, L=LONDON, O=CONDUKTOR, OU=TEST,
-                CN=gateway.conduktor.k8s.orb.local
-            ...
-            X509v3 extensions:
-                ...
-                X509v3 Subject Alternative Name:
-                    DNS:gateway.conduktor.k8s.orb.local, 
-                    DNS:brokermain0-gateway.conduktor.k8s.orb.local,
-                    DNS:brokermain1-gateway.conduktor.k8s.orb.local,
-                    DNS:brokermain2-gateway.conduktor.k8s.orb.local
-    ```
-    **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
-
-    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
-    
-    Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
-
-    We recommend using a certificate with a wildcard SAN, which in this case would be `*.conduktor.k8s.orb.local`, as well as the matching DNS wilcard CNAME alias. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
-    
-    If your certificate issuer or security team doesn't support wildcard SANs, then you can overprovision these SANs and DNS CNAME aliases, for example with brokermain0 through brokermain200.
-    
-
-1. (Optional) Inspect the `generate-tls.sh` script to see how it
-    - Creates a certificate authority (CA)
-    - Creates a CA cert
-    - Uses the CA cert to create service certificates for Kafka and Conduktor Gateway
-    - Constructs Subject Alternate Names (SANs) to allow Gateway to present to clients as any broker.
-    - Creates a truststore that clients can use to validate the identity of any service's certificate that has been signed by the CA
-
 
 ## Deploy
 

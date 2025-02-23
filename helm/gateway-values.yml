@@ -9,7 +9,6 @@ gateway:
     
     # Configure connection to Kafka
     KAFKA_BOOTSTRAP_SERVERS: franz-kafka.conduktor.svc.cluster.local:9092
-    KAFKA_SASL_MECHANISM: PLAIN
     KAFKA_SECURITY_PROTOCOL: SASL_SSL
     KAFKA_SSL_TRUSTSTORE_LOCATION: /etc/gateway/tls/truststore/kafka.truststore.jks
     
@@ -29,17 +28,6 @@ gateway:
   portRange:
     start: 9092
     count: 1
-  volumes:
-    - name: truststore
-      secret:
-        secretName: gateway-cert
-        items:
-        - key: kafka.truststore.jks
-          path: kafka.truststore.jks
-  volumeMounts:
-    - name: truststore
-      mountPath: /etc/gateway/tls/truststore/
-      readonly: true
 
 tls:
   enable: true
