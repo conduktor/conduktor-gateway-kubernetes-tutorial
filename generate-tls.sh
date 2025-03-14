@@ -1,137 +1,144 @@
 #!/bin/bash
 
+# Based on:
+# https://www.baeldung.com/openssl-self-signed-cert
+# https://stackoverflow.com/questions/906402/how-to-import-an-existing-x-509-certificate-and-private-key-in-java-keystore-to
+# https://stackoverflow.com/questions/14375235/how-to-list-the-certificates-stored-in-a-pkcs12-keystore-with-keytool
+
 mkdir -p ${PWD}/certs
 CA_PATH=${PWD}/certs
 
-#################################################
-## Helper functions
-#################################################
 
-create_certificate_per_user() {
 
-    local user=$1
 
-    shift
-    declare -a subject_alt_names
-    subject_alt_names+=("$user")
+### Helper Functions
 
-    # additional alt names if any
-    for additional_san in "$@"
-    do 
-        subject_alt_names+=($additional_san)
-    done
+create_ca() {
+echo
+echo "Create our own Root CA"
+openssl req \
+    -x509 -sha256 -days 1825 -newkey rsa:2048 \
+    -keyout ${CA_PATH}/rootCA.key -out ${CA_PATH}/rootCA.crt \
+    -passout pass:conduktor \
+    -subj '/CN=rootCA/OU=TEST/O=CONDUKTOR/L=LONDON/C=UK'
+}
 
-    local san_for_csr="SAN="
-    local san_for_config=""
-    local i=0
-    for san in "${subject_alt_names[@]}"
-    do
-        if [[ $i -gt 0 ]]; then
-            san_for_csr+=","
-            san_for_config+=","
-        fi
-        san_for_csr+="dns:${san}"
-        san_for_config+="DNS.$i:${san}"
-        ((i++))
-    done
 
-    local log_file="certs-create-$user.log"
 
-    echo "Generating certificate with following SAN: ${san_for_config}" >> $log_file 2>&1
 
-    # Create host keystore
-    keytool -genkey -noprompt \
-                -alias $user \
-                -dname "CN=$user,OU=TEST,O=CONDUKTOR,L=LONDON,C=UK" \
-                            -ext "$san_for_csr" \
-                -keystore $user.keystore.jks \
-                -keyalg RSA \
-                -storepass conduktor \
-                -keypass conduktor \
-                -storetype pkcs12 &> $log_file
+clean_certificates() {
+    local DIR="${CA_PATH}"
+    echo "Cleaning up directory $DIR"
+    (cd "${DIR}" && rm -f *.crt *.csr *_creds *.jks *.srl *.key *.pem *.der *.p12 *.log *.ext)
+}
 
-    # Create the certificate signing request (CSR)
-    keytool -keystore $user.keystore.jks -alias $user -certreq -file $user.csr -storepass conduktor -keypass conduktor -ext "$san_for_csr" >> $log_file 2>&1
-    #openssl req -in $user.csr -text -noout
 
-    echo "Sign the host certificate with the certificate authority (CA)"
-    # Set a random serial number (avoid problems from using '-CAcreateserial' when parallelizing certificate generation)
-    CERT_SERIAL=$(awk -v seed="$RANDOM" 'BEGIN { srand(seed); printf("0x%.4x%.4x%.4x%.4x\n", rand()*65535 + 1, rand()*65535 + 1, rand()*65535 + 1, rand()*65535 + 1) }')
-    openssl x509 -req -CA ${CA_PATH}/snakeoil-ca-1.crt -CAkey ${CA_PATH}/snakeoil-ca-1.key -in $user.csr -out $user-ca1-signed.crt -sha256 -days 365 -set_serial ${CERT_SERIAL} -passin pass:conduktor -extensions v3_req -extfile <(cat <<EOF
+
+
+create_certificate() {
+
+# Get subject alternate names (SANs) from arguments
+declare subject_alt_names
+i=0
+for san in "$@"
+do
+    subject_alt_names+=",DNS.$i:${san}"
+    ((i++))
+done
+# get rid of leading comma
+subject_alt_names=${subject_alt_names:1}
+
+echo
+echo "Generating ext file for SANs"
+echo "$subject_alt_names"
+
+cat <<END > ${CA_PATH}/$1.san.ext
 [req]
 distinguished_name = req_distinguished_name
 x509_extensions = v3_req
+req_extensions = v3_req
 prompt = no
 [req_distinguished_name]
-CN = $user
+CN = $1
 [v3_req]
 extendedKeyUsage = serverAuth, clientAuth
-subjectAltName = $san_for_config
-EOF
-) >> $log_file 2>&1
-    #openssl x509 -noout -text -in $user-ca1-signed.crt
+subjectAltName = $subject_alt_names
+END
 
-    echo "Sign and import the CA cert into the keystore"
-    keytool -noprompt -keystore $user.keystore.jks -alias snakeoil-caroot -import -file ${CA_PATH}/snakeoil-ca-1.crt -storepass conduktor -keypass conduktor >> $log_file 2>&1
-    #keytool -list -v -keystore $user.keystore.jks -storepass conduktor
 
-    # Sign and import the host certificate into the keystore
-    keytool -noprompt -keystore $user.keystore.jks -alias $user -import -file $user-ca1-signed.crt -storepass conduktor -keypass conduktor -ext "SAN=dns:$user,dns:localhost" >> $log_file 2>&1
-    #keytool -list -v -keystore $user.keystore.jks -storepass conduktor
+echo
+echo "Generate Private Key"
+openssl genrsa -des3 -passout pass:conduktor -out ${CA_PATH}/$1.key 2048
 
-    echo "Create truststore and import the CA cert"
-    # TODO: remove this and use 'global' truststore instead
-    keytool -noprompt -keystore $user.truststore.jks -alias snakeoil-caroot -import -file ${CA_PATH}/snakeoil-ca-1.crt -storepass conduktor -keypass conduktor >> $log_file 2>&1
+echo
+echo "Generate certificate signing request - This would have been sent to the CA"
+openssl req \
+    -key ${CA_PATH}/$1.key \
+    -new -out ${CA_PATH}/$1.csr \
+    -passin pass:conduktor \
+    -subj "/CN=${1}/OU=TEST/O=CONDUKTOR/L=LONDON/C=UK" \
+    -reqexts v3_req -config ${CA_PATH}/$1.san.ext
 
-    # Save creds
-    echo "conduktor" > ${user}_sslkey_creds
-    echo "conduktor" > ${user}_keystore_creds
-    echo "conduktor" > ${user}_truststore_creds
 
-    # Create pem files and keys used for Schema Registry HTTPS testing
-    #   openssl x509 -noout -modulus -in client.certificate.pem | openssl md5
-    #   openssl rsa -noout -modulus -in client.key | openssl md5 
-    #   echo "GET /" | openssl s_client -connect localhost:8085/subjects -cert client.certificate.pem -key client.key -tls1
-    keytool -export -alias $user -file $user.der -keystore $user.keystore.jks -storepass conduktor 2>> $log_file
-    openssl x509 -inform der -in $user.der -out $user.certificate.pem 2>> $log_file
-    keytool -importkeystore -srckeystore $user.keystore.jks -destkeystore $user.keystore.p12 -deststoretype PKCS12 -deststorepass conduktor -srcstorepass conduktor -noprompt 2>> $log_file 
-    openssl pkcs12 -in $user.keystore.p12 -nodes -nocerts -out $user.key -passin pass:conduktor 2>> $log_file
+echo
+echo "Generate Certificate, signed by Root CA with SAN"
+openssl x509 -req \
+    -CA ${CA_PATH}/rootCA.crt -CAkey ${CA_PATH}/rootCA.key \
+    -in ${CA_PATH}/$1.csr \
+    -out ${CA_PATH}/$1.crt \
+    -days 365 -CAcreateserial \
+    -extensions v3_req -extfile ${CA_PATH}/$1.san.ext \
+    -passin pass:conduktor
+
+echo
+echo "Show the content of the signed Certificate"
+openssl x509 -text -noout -in ${CA_PATH}/$1.crt -passin pass:conduktor
+
+echo
+echo "Creating full certificate chain"
+cat ${CA_PATH}/$1.crt ${CA_PATH}/rootCA.crt > ${CA_PATH}/$1.fullchain.crt
+
+echo
+echo "Generate a PKCS12 Keystore with alias $1"
+openssl pkcs12 -inkey ${CA_PATH}/$1.key -in ${CA_PATH}/$1.fullchain.crt -export -out ${CA_PATH}/$1.p12 -passin pass:conduktor -passout pass:conduktor -name $1
+
+echo
+echo "Show the content of the PKCS12 Keystore from the point of view of Java keytool, to see the alias"
+keytool -list -v -keystore ${CA_PATH}/$1.p12 -storepass conduktor -storetype PKCS12
+
+echo
+echo "Generate a JKS Keystore from PKCS12 Keystore"
+keytool \
+    -importkeystore \
+    -deststorepass conduktor -destkeypass conduktor \
+    -destkeystore ${CA_PATH}/$1.keystore.jks \
+    -deststoretype PKCS12 -srckeystore ${CA_PATH}/$1.p12 \
+    -srcstoretype PKCS12 \
+    -srcstorepass conduktor \
+    -alias $1
+
+echo
+echo "Show the content of the JKS Keystore"
+keytool -list -v -keystore ${CA_PATH}/$1.keystore.jks -storepass conduktor
 
 }
 
-clean_certificates() {
-    # Cleanup files
-    local DIR="${CA_PATH}"
-    echo $DIR
-    (cd "${DIR}" && rm -f *.crt *.csr *_creds *.jks *.srl *.key *.pem *.der *.p12 *.log)
-    (cd "${DIR}" && rm -fr keypair/)
-}
-
-generate_ca_cert() {
-    echo "Generate CA key"
-    (cd $CA_PATH && openssl req -new -x509 -keyout snakeoil-ca-1.key -out snakeoil-ca-1.crt -days 365 -subj '/CN=ca1.test.conduktor.io/OU=TEST/O=CONDUKTOR/L=LONDON/C=UK' -passin pass:conduktor -passout pass:conduktor)
-}
-
-generate_certificate() {
-    local user=$1
-    shift
-    
-    (cd $CA_PATH && create_certificate_per_user $user $@)
-    echo "Created certificates for $user"    
-}
-
-generate_truststore() {
-    echo "generating trust store"
-   (cd $CA_PATH && keytool -noprompt -keystore truststore.jks -alias snakeoil-caroot -import -file ${CA_PATH}/snakeoil-ca-1.crt -storepass conduktor -keypass conduktor) 
+create_truststore() {
+keytool -noprompt \
+    -keystore ${CA_PATH}/truststore.jks \
+    -alias rootCA \
+    -import -file ${CA_PATH}/rootCA.crt \
+    -storepass conduktor \
+    -keypass conduktor
 }
 
 
-#################################################
-## Main
-#################################################
-
+### Main function
 
 clean_certificates
-generate_ca_cert
-generate_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
-generate_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
+create_ca
+create_truststore
+create_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
+create_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
+
+cp ${CA_PATH}/truststore.jks ${CA_PATH}/kafka.truststore.jks 
