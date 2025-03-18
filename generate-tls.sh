@@ -98,6 +98,8 @@ echo
 echo "Creating full certificate chain"
 cat ${CA_PATH}/$1.crt ${CA_PATH}/rootCA.crt > ${CA_PATH}/$1.fullchain.crt
 
+
+# IMPORTANT: Creating the keystore this way will require the key password and keystore password to be the same
 echo
 echo "Generate a PKCS12 Keystore with alias $1"
 openssl pkcs12 -inkey ${CA_PATH}/$1.key -in ${CA_PATH}/$1.fullchain.crt -export -out ${CA_PATH}/$1.p12 -passin pass:conduktor -passout pass:conduktor -name $1
@@ -131,6 +133,8 @@ keytool -noprompt \
     -storepass conduktor \
     -keypass conduktor
 }
+
+
 
 
 ### Main function
