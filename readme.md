@@ -84,8 +84,8 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
     ```bash
     openssl x509 \
-        -in ./certs/gateway.conduktor.k8s.orb.local-ca1-signed.crt \
-        -text -noout
+    -in ./certs/gateway.conduktor.k8s.orb.local.fullchain.crt \
+    -text -noout
     ```
     ```
     Certificate:
@@ -151,7 +151,7 @@ curl \
     --request GET \
     --url 'https://gateway.conduktor.k8s.orb.local:8888/gateway/v2/interceptor?global=false' \
     --user "admin:conduktor" \
-    --cacert ./certs/snakeoil-ca-1.crt
+    --cacert ./certs/rootCA.crt
 ```
 ```
 [
@@ -164,23 +164,23 @@ export KAFKA_OPTS="-Djava.security.manager=allow"
 ```
 You can also add ` -Djavax.net.debug=ssl` to enable ssl debug messages.
 
-Look at metadata returned by Kafka.
+Look at the hostnames in the metadata returned by Kafka.
 
 ```bash
 kafka-broker-api-versions \
     --bootstrap-server franz-kafka.conduktor.svc.cluster.local:9092 \
-    --command-config client.properties
+    --command-config client.properties | grep 9092
 ```
 
 **NOTE**: The above uses a bit of OrbStack magic to reach an internal service from your laptop.
 Usually you would only be able to reach an internal service from a pod within the kubernetes cluster.
 
-Look at metadata returned by Gateway, accessed externally.
+Look at the hostnames in the metadata returned by Gateway, accessed externally.
 
 ```bash
 kafka-broker-api-versions \
     --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
-    --command-config client.properties
+    --command-config client.properties | grep 9092
 ```
 
 **NOTE**: OrbStack allows you to reach external services using the `*.k8s.orb.local` domain via Ingress Controller.
