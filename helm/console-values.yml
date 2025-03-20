@@ -1,0 +1,25 @@
+config:
+  existingSecret: console-env-vars
+
+platform:
+  existingConfigmap: 'platform-config.yaml'
+
+  extraVolumes:
+    - name: truststore
+      secret:
+        secretName: gateway-cert
+        items:
+        - key: kafka.truststore.jks
+          path: kafka.truststore.jks
+
+  extraVolumeMounts:
+    - name: truststore
+      mountPath: /etc/gateway/tls/truststore/
+      readonly: true
+
+ingress:
+  enabled: true
+  hostname: console.conduktor.k8s.orb.local
+  path: /
+  ingressClassName: nginx
+

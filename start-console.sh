@@ -1,0 +1,43 @@
+#!/bin/bash
+
+
+if ! kubectl get namespace conduktor >/dev/null 2>&1 ; then
+    echo "execute start.sh before running this script"
+    exit;    
+fi
+
+########################
+# Create kubernetes secrets for Postgres
+
+kubectl -n conduktor \
+    create secret generic postgres-passwords \
+        --from-literal=password=postgres \
+        --from-literal=postgres-password=postgres
+
+########################
+# Create kubernetes secrets for Console
+
+kubectl -n conduktor \
+    create secret generic console-env-vars \
+        --from-literal=CDK_ADMIN_EMAIL='admin@demo.dev' \
+        --from-literal=CDK_ADMIN_PASSWORD='adminP4ss!' \
+        --from-literal=CDK_DATABASE_PASSWORD=postgres \
+        --from-literal=CDK_DATABASE_USERNAME=postgres
+
+########################
+# Install components
+
+# Install Postgres
+helm install \
+    -f ./helm/postgres-values.yml \
+    -n conduktor \
+    postgresql oci://registry-1.docker.io/bitnamicharts/postgresql
+
+# Install Conduktor Console
+kubectl -n conduktor \
+    apply -f ./helm/console-configmap.yml
+
+helm install \
+    -f ./helm/console-values.yml \
+    -n conduktor \
+    console conduktor/console
