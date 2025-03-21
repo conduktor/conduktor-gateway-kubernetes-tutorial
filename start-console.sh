@@ -41,3 +41,15 @@ helm install \
     -f ./helm/console-values.yml \
     -n conduktor \
     console conduktor/console
+
+echo "Waiting for the Console to be available..."
+
+# Wait for the admission webhook service to have endpoints
+while true; do
+    if kubectl -n conduktor get pods|grep 'console.*Running'|grep -v cortex|grep '1/1'; then
+        echo "Console pod is ready! You can access it in the browser on https://console.conduktor.k8s.orb.local"
+        break
+    fi
+    echo "Waiting for Console pod to be ready..."
+    sleep 1
+done
