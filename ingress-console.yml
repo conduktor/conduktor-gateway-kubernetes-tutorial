@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-console
+  namespace: conduktor
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - console.conduktor.k8s.orb.local
+      secretName: console-tls
+  rules:
+    - host: console.conduktor.k8s.orb.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: console
+                port:
+                  number: 80

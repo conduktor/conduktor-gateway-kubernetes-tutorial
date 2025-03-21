@@ -143,6 +143,27 @@ A lot happens here:
 
 Inspect the start script, helm values, and ingress definition.
 
+Deploy Console (Optional).
+
+```bash
+./start-console.sh
+```
+
+What it does:
+- Create kubernetes secret for PostgreSQL
+- Create kubernetes secret for Console
+- Install PostgreSQL via Bitnami's PostgreSQL helm chart
+- Install Console (with Cortex included) via Conduktor's helm chart
+- Configure Console to connect to Kafka and Gateway
+
+Note 1: After this, you can access Console on https://console.conduktor.k8s.orb.local and login as administrator with username `admin@demo.dev` and password `adminP4ss!`.
+You have to ignore the warning from the browser about insecurity of the site because this Console is actually configured on HTTP port 8080 inside the pod. 
+But OrbStack exposes it as HTTPS. So the certificate name does not match the domain name. We will need to revisit this in the future. (TODO!!)
+
+Note 2: Conduktor Gateway has been configured with "Gateway" flavour. But it cannot communicate with the gateway because it does not have the correct truststore.
+So, to make it work, you have to check "Skip SSL Check" in the "Provider" tab. DO NOT upload the truststore because it will break the connections to the clusters
+(see [CUS-562](https://linear.app/conduktor/issue/CUS-562/internal-uploading-certificate-via-ui-breaks-kafka-cluster-connections)).
+
 ## Connect to Gateway
 
 Connect to the adminREST API call, which should receive a successful response with an empty list.
@@ -253,6 +274,7 @@ If you also want to delete the Ingress controller,
 - Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. 
   - Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
+- Console creates its own Ingress, so we do not need to add anything to ingress for Console.
 
 ## Appendix
 

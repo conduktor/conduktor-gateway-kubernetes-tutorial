@@ -71,6 +71,10 @@ EOF
     openssl genrsa -des3 -passout pass:conduktor -out ${CA_PATH}/$1.key 2048
 
     echo
+    echo "Generate unencrypted Private Key for kubectl secret"
+    openssl rsa -in ${CA_PATH}/$1.key -out ${CA_PATH}/$1.unencrypted.key -passin pass:conduktor
+
+    echo
     echo "Generate certificate signing request - This would have been sent to the CA"
     openssl req \
         -key ${CA_PATH}/$1.key \
@@ -144,5 +148,6 @@ create_ca
 create_truststore
 create_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
 create_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
+create_certificate console.conduktor.k8s.orb.local
 
 cp ${CA_PATH}/truststore.jks ${CA_PATH}/kafka.truststore.jks 
