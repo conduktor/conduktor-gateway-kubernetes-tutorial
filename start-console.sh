@@ -24,6 +24,11 @@ kubectl -n conduktor \
         --from-literal=CDK_DATABASE_PASSWORD=postgres \
         --from-literal=CDK_DATABASE_USERNAME=postgres
 
+kubectl -n conduktor \
+    create secret tls console-tls \
+        --cert=./certs/console.conduktor.k8s.orb.local.crt \
+        --key=./certs/console.conduktor.k8s.orb.local.unencrypted.key
+
 ########################
 # Install components
 

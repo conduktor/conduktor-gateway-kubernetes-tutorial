@@ -16,10 +16,3 @@ platform:
     - name: truststore
       mountPath: /etc/gateway/tls/truststore/
       readonly: true
-
-ingress:
-  enabled: true
-  hostname: console.conduktor.k8s.orb.local
-  path: /
-  ingressClassName: nginx
-
