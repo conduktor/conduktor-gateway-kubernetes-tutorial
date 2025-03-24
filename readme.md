@@ -66,7 +66,6 @@ OrbStack has some networking magic that makes the entire tutorial run locally wi
     ```bash
     export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
     ```
-
 ## Prepare Certificates
 
 This example will generate certificates that will be used by Kafka brokers and Gateway instances to establish secure connections using TLS.
@@ -146,7 +145,7 @@ Inspect the start script, helm values, and ingress definition.
 Deploy Console (Optional).
 
 ```bash
-./start-console.sh
+./add_console.sh
 ```
 
 What it does:
@@ -274,7 +273,6 @@ If you also want to delete the Ingress controller,
 - Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. 
   - Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
-- Console creates its own Ingress, so we do not need to add anything to ingress for Console.
 
 ## Appendix
 
