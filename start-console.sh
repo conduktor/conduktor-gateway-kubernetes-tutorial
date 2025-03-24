@@ -63,8 +63,8 @@ while true; do
         break
     fi
     echo "Waiting for Console pod to be ready..."
-    sleep 1
+    sleep 5
 done
 
 echo "Installing ingress for Console"
-kubectl -n conduktor apply -f ingress-console.yml
+kubectl apply -f ingress-console.yml
