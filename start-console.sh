@@ -21,8 +21,18 @@ kubectl -n conduktor \
     create secret generic console-env-vars \
         --from-literal=CDK_ADMIN_EMAIL='admin@demo.dev' \
         --from-literal=CDK_ADMIN_PASSWORD='adminP4ss!' \
-        --from-literal=CDK_DATABASE_PASSWORD=postgres \
-        --from-literal=CDK_DATABASE_USERNAME=postgres
+        --from-literal=CDK_DATABASE_PASSWORD='postgres' \
+        --from-literal=CDK_DATABASE_USERNAME='postgres' \
+        --from-literal=CDK_CLUSTERS_0_PROPERTIES='security.protocol=SASL_SSL
+sasl.mechanism=PLAIN
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+ssl.truststore.location=/etc/gateway/tls/truststore/kafka.truststore.jks
+ssl.truststore.password=conduktor' \
+       --from-literal=CDK_CLUSTERS_1_PROPERTIES='security.protocol=SASL_SSL
+sasl.mechanism=PLAIN
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";
+ssl.truststore.location=/etc/gateway/tls/truststore/kafka.truststore.jks
+ssl.truststore.password=conduktor'
 
 kubectl -n conduktor \
     create secret tls console-tls \
@@ -39,9 +49,6 @@ helm install \
     postgresql oci://registry-1.docker.io/bitnamicharts/postgresql
 
 # Install Conduktor Console
-kubectl -n conduktor \
-    apply -f ./helm/console-configmap.yml
-
 helm install \
     -f ./helm/console-values.yml \
     -n conduktor \
@@ -58,3 +65,6 @@ while true; do
     echo "Waiting for Console pod to be ready..."
     sleep 1
 done
+
+echo "Installing ingress for Console"
+kubectl -n conduktor apply -f ingress-console.yml
