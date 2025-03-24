@@ -42,9 +42,3 @@ platform:
     - name: truststore
       mountPath: /etc/gateway/tls/truststore/
       readonly: true
-
-# This is meant to allow TLS termination at the LoadBalancer.
-# But OrbStack already intercept all HTTPS requests, so we don't know if this actually works until
-# we try to deploy this outside OrbStack.
-service:
-  type: LoadBalancer
