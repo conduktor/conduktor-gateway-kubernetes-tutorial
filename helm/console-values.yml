@@ -1,0 +1,44 @@
+config:
+  existingSecret: console-env-vars
+
+  organization:
+    name: 'Conduktor Demo'
+
+  admin:
+    email: 'admin@demo.dev'
+
+  database:
+    host: 'postgresql'
+    port: 5432
+    name: 'postgres'
+
+  clusters:
+    - id: my-local-kafka-cluster
+      name: My Local Kafka Cluster
+      color: '#0013E7'
+      bootstrapServers: 'franz-kafka.conduktor.svc.cluster.local:9092'
+    - id: conduktor-gateway
+      name: Conduktor Gateway
+      color: '#FF0000'
+      bootstrapServers: 'gateway.conduktor.k8s.orb.local:9092'
+      kafkaFlavor:
+        type: Gateway
+        url: https://gateway.conduktor.k8s.orb.local:8888
+        user: admin
+        password: conduktor
+        virtualCluster: passthrough
+        ignoreUntrustedCertificate: true
+
+platform:
+  extraVolumes:
+    - name: truststore
+      secret:
+        secretName: gateway-cert
+        items:
+        - key: kafka.truststore.jks
+          path: kafka.truststore.jks
+
+  extraVolumeMounts:
+    - name: truststore
+      mountPath: /etc/gateway/tls/truststore/
+      readonly: true
