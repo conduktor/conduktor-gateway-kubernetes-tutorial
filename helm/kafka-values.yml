@@ -1,6 +1,10 @@
 # helm install kafka oci://registry-1.docker.io/bitnamicharts/kafka
 
-replicaCount: 3
+controller:
+  replicaCount: 3
+
+broker:
+  replicaCount: 4
 
 listeners:
   client:

@@ -146,8 +146,26 @@ create_truststore() {
 clean_certificates
 create_ca
 create_truststore
-create_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
-create_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
+
+create_certificate kafka \
+    franz-kafka.conduktor.svc.cluster.local \
+    *.franz-kafka-controller-headless.conduktor.svc.cluster.local \
+    *.franz-kafka-broker-headless.conduktor.svc.cluster.local
+
+create_certificate gateway.conduktor.k8s.orb.local \
+    brokermain0-gateway.conduktor.k8s.orb.local \
+    brokermain1-gateway.conduktor.k8s.orb.local \
+    brokermain2-gateway.conduktor.k8s.orb.local \
+    brokermain3-gateway.conduktor.k8s.orb.local \
+    brokermain4-gateway.conduktor.k8s.orb.local \
+    brokermain5-gateway.conduktor.k8s.orb.local \
+    brokermain100-gateway.conduktor.k8s.orb.local \
+    brokermain101-gateway.conduktor.k8s.orb.local \
+    brokermain102-gateway.conduktor.k8s.orb.local \
+    brokermain103-gateway.conduktor.k8s.orb.local \
+    brokermain104-gateway.conduktor.k8s.orb.local \
+    brokermain105-gateway.conduktor.k8s.orb.local
+
 create_certificate console.conduktor.k8s.orb.local
 
 cp ${CA_PATH}/truststore.jks ${CA_PATH}/kafka.truststore.jks 
