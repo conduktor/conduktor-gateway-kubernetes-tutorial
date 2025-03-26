@@ -52,9 +52,11 @@ kubectl -n conduktor \
 # Install components
 
 # Install Kafka via Bitnami's Kafka helm chart
+# The newer chart version is broken, so we have to explicitly specify the chart version
 helm install \
     -f ./helm/kafka-values.yml \
     -n conduktor \
+    --version 31.5.0 \
     franz oci://registry-1.docker.io/bitnamicharts/kafka
 
 # Add helm repos
