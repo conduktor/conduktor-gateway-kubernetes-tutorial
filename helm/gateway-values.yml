@@ -1,7 +1,7 @@
 fullnameOverride: gateway
 
 gateway:
-  # startupProbeDelay: 10000
+  # startupProbeDelay: 15
   replicas: 2
   secretRef: gateway-env-vars
   env:

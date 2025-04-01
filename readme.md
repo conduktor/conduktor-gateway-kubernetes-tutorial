@@ -284,26 +284,26 @@ The interaction between kcat and OrbStack's ingress controller is a bit buggy. C
 kcat -L -b franz-kafka.conduktor.svc.cluster.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
-    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
+    -X ssl.ca.location=./certs/rootCA.crt
 ```
 
 ```bash
 kcat -L -b gateway.conduktor.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
-    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
+    -X ssl.ca.location=./certs/rootCA.crt
 ```
 
 ```bash
 echo "hello1" | kcat -t test -P -b gateway.conduktor.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
-    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
+    -X ssl.ca.location=./certs/rootCA.crt
 ```
 
 ```bash
 kcat -t test -C -b gateway.conduktor.k8s.orb.local:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
-    -X ssl.ca.location=./certs/snakeoil-ca-1.crt
+    -X ssl.ca.location=./certs/rootCA.crt
 ```

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 if [ ! -f ./certs/kafka.truststore.jks ]; then
-    echo "create the keystore files before running this script"
-    exit;    
+    ./generate-tls.sh
 fi
 
 
@@ -55,6 +54,7 @@ kubectl -n conduktor \
 helm install \
     -f ./helm/kafka-values.yml \
     -n conduktor \
+    --version 31.1.0 \
     franz oci://registry-1.docker.io/bitnamicharts/kafka
 
 # Add helm repos
