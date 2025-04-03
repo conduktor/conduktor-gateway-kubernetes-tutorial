@@ -34,22 +34,19 @@ sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule require
 ssl.truststore.location=/etc/gateway/tls/truststore/kafka.truststore.jks
 ssl.truststore.password=conduktor'
 
-kubectl -n conduktor \
-    create secret tls console-tls \
-        --cert=$PWD/certs/console.conduktor.k8s.orb.local.crt \
-        --key=$PWD/certs/console.conduktor.k8s.orb.local.unencrypted.key
+
 
 ########################
 # Install components
 
 # Install Postgres
-helm install \
+helm upgrade --install \
     -f $PWD/helm/postgres-values.yml \
     -n conduktor \
     postgresql oci://registry-1.docker.io/bitnamicharts/postgresql
 
 # Install Conduktor Console
-helm install \
+helm upgrade --install \
     -f $PWD/helm/console-values.yml \
     -n conduktor \
     console conduktor/console

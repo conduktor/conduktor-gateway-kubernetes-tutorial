@@ -51,7 +51,7 @@ kubectl -n conduktor \
 # Install components
 
 # Install Kafka via Bitnami's Kafka helm chart
-helm install \
+helm upgrade --install \
     -f $PWD/helm/kafka-values.yml \
     -n conduktor \
     --version 31.1.0 \
@@ -63,7 +63,7 @@ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo update
 
 # Install Gateway
-helm install \
+helm upgrade --install \
     -f $PWD/helm/gateway-values.yml \
     -n conduktor \
     gateway conduktor/conduktor-gateway

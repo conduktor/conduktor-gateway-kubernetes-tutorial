@@ -1,5 +1,9 @@
 config:
   existingSecret: console-env-vars
+  
+  platform:
+    external:
+      url: https://console.conduktor.k8s.orb.local
 
   organization:
     name: 'Conduktor Demo'
@@ -42,6 +46,9 @@ platform:
     - name: truststore
       mountPath: /etc/gateway/tls/truststore/
       readonly: true
+
+service:
+  type: LoadBalancer
 
 # Cortex configuration override
 # platformCortex:
