@@ -21,7 +21,7 @@ The default way Conduktor Gateway routes traffic to Kafka brokers is with port-b
 Each Gateway instance opens a port for each broker.
 
 <div style="text-align: center;">
-  <img src="./port-based.jpg">
+  <img src="./media/port-based.jpg">
 </div>
 
 However, this can cause complications when the number of brokers changes.
@@ -37,7 +37,7 @@ Kubernetes has its own networking concepts, so it is helpful to see an example f
 Here is an overview of what we will deploy:
 
 <div style="text-align: center;">
-  <img src="./architecture.png">
+  <img src="./media/architecture.png">
 </div>
 
 
@@ -66,6 +66,8 @@ OrbStack has some networking magic that makes the entire tutorial run locally wi
     ```bash
     export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
     ```
+    Alternatively, consider using [sdkman](https://sdkman.io/) to manage your Java versions.
+
 ## Prepare Certificates
 
 This example will generate certificates that will be used by Kafka brokers and Gateway instances to establish secure connections using TLS.
@@ -77,7 +79,7 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 1. Run the following script to generate the keystores and truststore.
 
     ```bash
-    ./generate-tls.sh
+    ./scripts/generate-tls.sh
     ```
 
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
@@ -104,7 +106,7 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
                     DNS:brokermain1-gateway.conduktor.k8s.orb.local,
                     DNS:brokermain2-gateway.conduktor.k8s.orb.local
     ```
-    **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
+    > **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
 
     OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
     
@@ -125,10 +127,10 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 
 ## Deploy
 
-Deploy Kafka and Gateway.
+### Deploy Kafka and Gateway.
 
 ```bash
-./start.sh
+./scripts/start.sh
 ```
 
 A lot happens here:
@@ -142,10 +144,10 @@ A lot happens here:
 
 Inspect the start script, helm values, and ingress definition.
 
-Deploy Console (Optional).
+### Deploy Console (Optional).
 
 ```bash
-./add_console.sh
+./scripts/add_console.sh
 ```
 
 What it does:
@@ -155,13 +157,11 @@ What it does:
 - Install Console (with Cortex included) via Conduktor's helm chart
 - Configure Console to connect to Kafka and Gateway
 
-Note 1: After this, you can access Console on https://console.conduktor.k8s.orb.local and login as administrator with username `admin@demo.dev` and password `adminP4ss!`.
-You have to ignore the warning from the browser about insecurity of the site because this Console is actually configured on HTTP port 8080 inside the pod. 
-But OrbStack exposes it as HTTPS. So the certificate name does not match the domain name. We will need to revisit this in the future. (TODO!!)
+> **Note**: After this, you can access Console on https://console.conduktor.k8s.orb.local and login as administrator with username `admin@demo.dev` and password `adminP4ss!`.
 
-Note 2: Conduktor Gateway has been configured with "Gateway" flavour. But it cannot communicate with the gateway because it does not have the correct truststore.
-So, to make it work, you have to check "Skip SSL Check" in the "Provider" tab. DO NOT upload the truststore because it will break the connections to the clusters
-(see [CUS-562](https://linear.app/conduktor/issue/CUS-562/internal-uploading-certificate-via-ui-breaks-kafka-cluster-connections)).
+> **Note**: Conduktor Gateway has been configured with "Gateway" flavor, but it cannot communicate with the gateway because it does not have the correct truststore.
+To make it work, you have to check **"Skip SSL Check" in the "Provider" tab**.
+DO NOT upload the rootCA.crt. Uploading will allow you to manage Gateway interceptors but it will break Console's Kafka client (known issue).
 
 ## Connect to Gateway
 
@@ -203,7 +203,7 @@ kafka-broker-api-versions \
     --command-config client.properties | grep 9092
 ```
 
-**NOTE**: OrbStack allows you to reach external services using the `*.k8s.orb.local` domain via Ingress Controller.
+> **NOTE**: OrbStack allows you to reach external services using the `*.k8s.orb.local` domain via Ingress Controller.
 
 Create a topic (going through Gateway).
 
@@ -256,7 +256,7 @@ kubectl delete namespace conduktor
 If you also want to delete the Ingress controller, 
 
 ```bash
-./stop.sh
+./scripts/stop.sh
 ```
 
 ## Takeaways
@@ -275,6 +275,21 @@ If you also want to delete the Ingress controller,
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
 
 ## Appendix
+
+### Create an interceptor
+
+Source credentials.
+
+```bash
+source .env
+```
+
+Create interceptor that protects Kafka from poorly configured producers.
+```
+conduktor apply -f resources/producer-safeguard.yml
+```
+
+Try to produce records and then consume `_conduktor_gateway_auditlogs` topic to see policy violation information.
 
 ### kcat commands
 

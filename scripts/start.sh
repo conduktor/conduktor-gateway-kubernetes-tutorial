@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -f ./certs/kafka.truststore.jks ]; then
-    ./generate-tls.sh
+    $PWD/scripts/generate-tls.sh
 fi
 
 
@@ -26,8 +26,8 @@ kubectl -n conduktor \
 
 kubectl -n conduktor \
     create secret generic kafka-cert \
-        --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks \
-        --from-file=kafka.keystore.jks=./certs/kafka.keystore.jks
+        --from-file=kafka.truststore.jks=$PWD/certs/kafka.truststore.jks \
+        --from-file=kafka.keystore.jks=$PWD/certs/kafka.keystore.jks
 ########################
 # Create kubernetes secrets for Gateway
 
@@ -35,8 +35,8 @@ kubectl -n conduktor \
 # Use kafka.truststore.jks since that is the one that trusts the Kafka cert.
 kubectl -n conduktor \
     create secret generic gateway-cert \
-        --from-file=gateway.conduktor.k8s.orb.local.keystore.jks=./certs/gateway.conduktor.k8s.orb.local.keystore.jks \
-        --from-file=kafka.truststore.jks=./certs/kafka.truststore.jks
+        --from-file=gateway.conduktor.k8s.orb.local.keystore.jks=$PWD/certs/gateway.conduktor.k8s.orb.local.keystore.jks \
+        --from-file=kafka.truststore.jks=$PWD/certs/kafka.truststore.jks
 
 kubectl -n conduktor \
     create secret generic gateway-env-vars \
@@ -52,7 +52,7 @@ kubectl -n conduktor \
 
 # Install Kafka via Bitnami's Kafka helm chart
 helm install \
-    -f ./helm/kafka-values.yml \
+    -f $PWD/helm/kafka-values.yml \
     -n conduktor \
     --version 31.1.0 \
     franz oci://registry-1.docker.io/bitnamicharts/kafka
@@ -64,7 +64,7 @@ helm repo update
 
 # Install Gateway
 helm install \
-    -f ./helm/gateway-values.yml \
+    -f $PWD/helm/gateway-values.yml \
     -n conduktor \
     gateway conduktor/conduktor-gateway
 
@@ -87,4 +87,4 @@ while true; do
 done
 
 # Create Ingress for Gateway
-kubectl apply -f ingress.yml
+kubectl apply -f $PWD/kubernetes/ingress.yml

@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: conduktor-console-cortex-config
+  labels:
+    app.kubernetes.io/name: console
+    app.kubernetes.io/instance: conduktor
+    app.kubernetes.io/component: conduktor-platform-cortex
+data:
+  cortex.yaml: |
+    blocks_storage:
+      tsdb:
+        retention_period: 24h
+      s3:
+        http:
+          insecure_skip_verify: true
+  prometheus.yaml: |
+    global:
+      scrape_interval: 15s
+      evaluation_interval: 15s

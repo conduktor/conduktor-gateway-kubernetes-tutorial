@@ -42,3 +42,17 @@ platform:
     - name: truststore
       mountPath: /etc/gateway/tls/truststore/
       readonly: true
+
+# Cortex configuration override
+# platformCortex:
+#   extraVolumes: 
+#     - name: cortex-config-override
+#       configMap:
+#         name: conduktor-console-cortex-config
+#   extraVolumeMounts:
+#         - name: cortex-config-override
+#           subPath: cortex.yaml # key in configmap to use as file contents
+#           mountPath: /opt/override-configs/cortex.yaml # path to file in Cortex container
+#         - name: cortex-config-override
+#           subPath: prometheus.yaml
+#           mountPath: /opt/override-configs/prometheus.yaml

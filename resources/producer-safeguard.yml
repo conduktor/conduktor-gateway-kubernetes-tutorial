@@ -1,0 +1,17 @@
+---
+apiVersion: gateway/v2
+kind: Interceptor
+metadata:
+  name: guard-on-produce
+spec:
+  pluginClass: io.conduktor.gateway.interceptor.safeguard.ProducePolicyPlugin
+  priority: 100
+  config:
+    acks:
+      value: [-1]
+      action: OVERRIDE  # or BLOCK to smack your devs
+    compressions: 
+      value: ["LZ4"]
+    idempotenceRequired:
+      value: true
+      action: INFO

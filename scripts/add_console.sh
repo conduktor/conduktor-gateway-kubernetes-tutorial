@@ -36,21 +36,21 @@ ssl.truststore.password=conduktor'
 
 kubectl -n conduktor \
     create secret tls console-tls \
-        --cert=./certs/console.conduktor.k8s.orb.local.crt \
-        --key=./certs/console.conduktor.k8s.orb.local.unencrypted.key
+        --cert=$PWD/certs/console.conduktor.k8s.orb.local.crt \
+        --key=$PWD/certs/console.conduktor.k8s.orb.local.unencrypted.key
 
 ########################
 # Install components
 
 # Install Postgres
 helm install \
-    -f ./helm/postgres-values.yml \
+    -f $PWD/helm/postgres-values.yml \
     -n conduktor \
     postgresql oci://registry-1.docker.io/bitnamicharts/postgresql
 
 # Install Conduktor Console
 helm install \
-    -f ./helm/console-values.yml \
+    -f $PWD/helm/console-values.yml \
     -n conduktor \
     console conduktor/console
 
@@ -60,6 +60,8 @@ echo "Waiting for the Console to be available..."
 while true; do
     if kubectl -n conduktor get pods|grep 'console.*Running'|grep -v cortex|grep '1/1'; then
         echo "Console pod is ready! You can access it in the browser on https://console.conduktor.k8s.orb.local"
+        echo "username: admin@demo.dev"
+        echo "password: adminP4ss!"
         break
     fi
     echo "Waiting for Console pod to be ready..."
@@ -67,4 +69,4 @@ while true; do
 done
 
 echo "Installing ingress for Console"
-kubectl apply -f ingress-console.yml
+kubectl apply -f $PWD/kubernetes/ingress-console.yml
