@@ -144,9 +144,10 @@ create_ca
 create_truststore
 create_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
 create_certificate gateway.conduktor.k8s.orb.local brokermain0-gateway.conduktor.k8s.orb.local brokermain1-gateway.conduktor.k8s.orb.local brokermain2-gateway.conduktor.k8s.orb.local
-create_certificate console.conduktor.k8s.orb.local
 
-echo "Generate unencrypted Private Key for Console kubectl secret"
-openssl rsa -in ${CA_PATH}/console.conduktor.k8s.orb.local.key -out ${CA_PATH}/console.conduktor.k8s.orb.local.unencrypted.key -passin pass:conduktor
+# Console HTTPS...but we generally recommend TLS termination at a load balancer for Console.
+# create_certificate console.conduktor.k8s.orb.local
+# echo "Generate unencrypted Private Key for Console kubectl secret"
+# openssl rsa -in ${CA_PATH}/console.conduktor.k8s.orb.local.key -out ${CA_PATH}/console.conduktor.k8s.orb.local.unencrypted.key -passin pass:conduktor
 
 cp ${CA_PATH}/truststore.jks ${CA_PATH}/kafka.truststore.jks 
