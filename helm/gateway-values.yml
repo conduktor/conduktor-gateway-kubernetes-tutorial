@@ -1,7 +1,7 @@
 fullnameOverride: gateway
 
 gateway:
-  # startupProbeDelay: 15
+  startupProbeDelay: 15
   replicas: 2
   secretRef: gateway-env-vars
   env:
@@ -21,6 +21,8 @@ gateway:
     GATEWAY_SNI_HOST_SEPARATOR: "-" # e.g. "brokermain0" + "-" + "gateway.conduktor.k8s.orb.local"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
     GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.conduktor.k8s.orb.local.keystore.jks
+    GATEWAY_UPSTREAM_MAX_IDLE_TIME_MS: "1200000"
+    GATEWAY_INFLIGHT_REQUEST_EXPIRY_MS: "1200000"
     
     # # Enhanced logging
     # LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug
