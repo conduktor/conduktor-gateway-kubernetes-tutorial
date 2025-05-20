@@ -71,17 +71,16 @@ helm upgrade --install \
 
 # Install Ingress Controller
 kubectl create namespace ingress-nginx
-kubectl apply -f $PWD/kubernetes/ingress-tcp-configmap.yml
+# kubectl apply -f $PWD/kubernetes/ingress-tcp-configmap.yml
 
 helm upgrade \
     --install ingress-nginx ingress-nginx/ingress-nginx \
     --namespace ingress-nginx \
-    --set controller.extraArgs.enable-ssl-passthrough="true" \
-    --set controller.extraArgs.tcp-services-configmap=ingress-nginx/tcp-services
+    -f $PWD/helm/ingress-nginx-values.yml
 
-kubectl patch svc ingress-nginx-controller -n ingress-nginx \
-  --type='json' \
-  -p='[{"op":"add","path":"/spec/ports/-","value":{"name":"tcp-9092","port":9092,"protocol":"TCP","targetPort":9092}}]'
+# kubectl patch svc ingress-nginx-controller -n ingress-nginx \
+#   --type='json' \
+#   -p='[{"op":"add","path":"/spec/ports/-","value":{"name":"tcp-9092","port":9092,"protocol":"TCP","targetPort":9092}}]'
 
 
 echo "Waiting for the ingress-nginx LoadBalancer IP to be available..."
