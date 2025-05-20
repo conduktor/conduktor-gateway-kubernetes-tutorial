@@ -31,7 +31,7 @@ This is especially problematic when using a managed Kafka service where the numb
 One way to solve this is with host-based routing, also known as Server Name Indication (SNI) routing.
 SNI routing allows Gateway expose a single port and route requests to individual brokers based on hostname rather than port ([see SNI routing guide in the docs](https://docs.conduktor.io/gateway/how-to/sni-routing/) for more information).
 
-This tutorial sets up SNI routing specifically for a Kubernetes cluster that exposes Gateway to clients externally via an Ingress.
+This tutorial sets up SNI routing specifically for a Kubernetes cluster that exposes Gateway to clients externally via external `LoadBalancer` service.
 Kubernetes has its own networking concepts, so it is helpful to see an example for how SNI routing works for Conduktor Gateway deployed on Kubernetes specifically.
 
 Here is an overview of what we will deploy:
@@ -44,7 +44,7 @@ Here is an overview of what we will deploy:
 ## Setup
 
 To run this all locally, I will use [OrbStack](https://orbstack.dev/), a container and VM management tool for Mac only (sorry!).
-I chose OrbStack specifically because this tutorial aims to show how external clients will connect via an Ingress Controller, which can otherwise be difficult to do without either running up a cloud bill or sacrificing authenticity compared to a real-world deployment.
+I chose OrbStack specifically because this tutorial aims to show how external clients will connect via an external `LoadBalancer` service, which can otherwise be difficult to do without either running up a cloud bill or sacrificing authenticity compared to a real-world deployment.
 OrbStack has some networking magic that makes the entire tutorial run locally without sacrificing authenticity.
 
 1. Install homebrew at [https://brew.sh/](https://brew.sh/).
@@ -108,7 +108,7 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
     ```
     > **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
 
-    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the Ingress load balancer IP address. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
+    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the external IP address of the `LoadBalancer` service. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
     
     Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
 
@@ -133,16 +133,14 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 ./scripts/start.sh
 ```
 
-A lot happens here:
+Here is what happens:
 - Create shared namespace `conduktor`
 - Create kubernetes secrets for Kafka
 - Create kubernetes secrets for Gateway
 - Install Kafka via Bitnami's Kafka helm chart
 - Install Gateway via Conduktor's helm chart
-- Install `ingress-nginx` Ingress Controller
-- Create Ingress for Gateway
 
-Inspect the start script, helm values, and ingress definition.
+Inspect the start script and helm values.
 
 ### Deploy Console (Optional).
 
@@ -192,7 +190,7 @@ kafka-broker-api-versions \
     --command-config client.properties | grep 9092
 ```
 
-**NOTE**: The above uses a bit of OrbStack magic to reach an internal service from your laptop.
+**NOTE**: The above uses a bit of OrbStack networking magic to reach an internal service from your laptop.
 Usually you would only be able to reach an internal service from a pod within the kubernetes cluster.
 
 Look at the hostnames in the metadata returned by Gateway, accessed externally.
@@ -203,7 +201,7 @@ kafka-broker-api-versions \
     --command-config client.properties | grep 9092
 ```
 
-> **NOTE**: OrbStack allows you to reach external services using the `*.k8s.orb.local` domain via Ingress Controller.
+> **NOTE**: OrbStack does some magic networking here to allow you to reach external `LoadBalancer` services using the `*.k8s.orb.local` domain.
 
 Create a topic (going through Gateway).
 
@@ -253,7 +251,7 @@ Clean up kubernetes resources.
 kubectl delete namespace conduktor
 ```
 
-If you also want to delete the Ingress controller, 
+Or for convenience:
 
 ```bash
 ./scripts/stop.sh
@@ -261,15 +259,16 @@ If you also want to delete the Ingress controller,
 
 ## Takeaways
 
-- Your Ingress Controller must support **layer 4 routing** (TCP, not HTTP) with **TLS-passthrough**.
-    - For AWS EKS this would mean using the Load Balancer Controller with Network Load Balancer (NLB).
+- It is highly recommended to configure Conduktor Gateway with an external service of type `LoadBalancer`
+    - For exmaple, AWS EKS uses the Load Balancer Controller with Network Load Balancer (NLB) to expose `LoadBalancer` services.
+- If you have no choice but to use an Ingress Controller, it must support **layer 4 routing** (TCP, not HTTP) with **TLS-passthrough**.
     - TLS passthrough is required so that Gateway can use the SNI headers in the TLS handshake to route requests to specific brokers. 
-- Your client must be able to resolve all hosts advertised by Gateway to the external load balancer. In this example, OrbStack magically points all `*.k8s.orb.local` to the ingress-nginx Ingress Controller, and the Ingress we defined points these hosts to the `gateway-external` service:
+- Your client must be able to resolve all hosts advertised by Gateway to the external IP address. In this example, OrbStack magically routes all `*.k8s.orb.local` into the Kubernetes cluster so you don't have to update DNS anywhere, but if you had to, you would need to make sure all of these hostnames map to the external IP of the `LoadBalancer` service:
     - `gateway.conduktor.k8s.orb.local`
     - `brokermain0-gateway.conduktor.k8s.orb.local`
     - `brokermain1-gateway.conduktor.k8s.orb.local`
     - `brokermain2-gateway.conduktor.k8s.orb.local`
-    - As brokers are added, any `brokermain<broker id>-gateway.conduktor.k8s.orb.local` will be routed automatically without requiring changes elsewhere in the infrastructure.
+    - If you use a wildcard DNS, e.g. `*.conduktor.k8s.orb.local`, then as brokers are added, any `brokermain<broker id>-gateway.conduktor.k8s.orb.local` will be routed automatically without requiring changes elsewhere in the infrastructure.
 - Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. 
   - Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
@@ -290,6 +289,14 @@ conduktor apply -f resources/producer-safeguard.yml
 ```
 
 Try to produce records and then consume `_conduktor_gateway_auditlogs` topic to see policy violation information.
+
+### Consume and produce scripts
+
+Try out the produce / consume scripts. For example:
+
+```
+./scripts/consume.sh
+```
 
 ### kcat commands
 
