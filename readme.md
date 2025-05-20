@@ -149,7 +149,7 @@ Here is a command you can run for convenience that requires `sudo` privileges.
 
 ```
 IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o=json | jq -r '.status.loadBalancer.ingress[0].ip') && \
-echo "$IP gateway.k8s.tutorial brokermain0-gateway.k8s.tutorial brokermain1-gateway.k8s.tutorial brokermain2-gateway.k8s.tutorial" | sudo tee -a /etc/hosts 
+echo -e "\n$IP gateway.k8s.tutorial brokermain0-gateway.k8s.tutorial brokermain1-gateway.k8s.tutorial brokermain2-gateway.k8s.tutorial" | sudo tee -a /etc/hosts 
 ```
 
 This simulates making a DNS entry to point all Gateway hostnames to the Ingress Controller IP.
@@ -171,7 +171,7 @@ Similaryly, you will have to adjust `/etc/hosts` to map `console.k8s.tutorial` h
 
 ```
 IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o=json | jq -r '.status.loadBalancer.ingress[0].ip') && \
-echo "$IP console.k8s.tutorial" | sudo tee -a /etc/hosts 
+echo -e "\n$IP console.k8s.tutorial" | sudo tee -a /etc/hosts 
 ```
 
 > **Note**: After this, you can access Console on https://console.k8s.tutorial and login as administrator with username `admin@demo.dev` and password `adminP4ss!`.
