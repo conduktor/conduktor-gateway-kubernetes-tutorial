@@ -7,10 +7,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - console.conduktor.k8s.orb.local
+        - console.k8s.tutorial
       secretName: console-tls
   rules:
-    - host: console.conduktor.k8s.orb.local
+    - host: console.k8s.tutorial
       http:
         paths:
           - path: /

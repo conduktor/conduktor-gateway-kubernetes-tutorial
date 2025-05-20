@@ -167,6 +167,13 @@ What it does:
 - Install Console (with Cortex included) via Conduktor's helm chart
 - Configure Console to connect to Kafka and Gateway
 
+Similaryly, you will have to adjust `/etc/hosts` to map `console.k8s.tutorial` hostname to the Ingress Controller IP.
+
+```
+IP=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o=json | jq -r '.status.loadBalancer.ingress[0].ip') && \
+echo "$IP console.k8s.tutorial" | sudo tee -a /etc/hosts 
+```
+
 > **Note**: After this, you can access Console on https://console.k8s.tutorial and login as administrator with username `admin@demo.dev` and password `adminP4ss!`.
 
 > **Note**: Conduktor Gateway has been configured with "Gateway" flavor, but it cannot communicate with the gateway because it does not have the correct truststore.

@@ -3,7 +3,7 @@ config:
   
   platform:
     external:
-      url: https://console.conduktor.k8s.orb.local
+      url: https://console.k8s.tutorial
 
   organization:
     name: 'Conduktor Demo'
@@ -24,10 +24,10 @@ config:
     - id: conduktor-gateway
       name: Conduktor Gateway
       color: '#FF0000'
-      bootstrapServers: 'gateway.conduktor.k8s.orb.local:9092'
+      bootstrapServers: 'gateway.k8s.tutorial:9092'
       kafkaFlavor:
         type: Gateway
-        url: https://gateway.conduktor.k8s.orb.local:8888
+        url: https://gateway.k8s.tutorial
         user: admin
         password: conduktor
         virtualCluster: passthrough
@@ -47,8 +47,6 @@ platform:
       mountPath: /etc/gateway/tls/truststore/
       readonly: true
 
-service:
-  type: LoadBalancer
 
 # Cortex configuration override from configmap
 # platformCortex:
