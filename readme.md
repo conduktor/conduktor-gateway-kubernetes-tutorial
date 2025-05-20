@@ -186,7 +186,7 @@ Connect to the adminREST API call, which should receive a successful response wi
 ```bash
 curl \
     --request GET \
-    --url 'https://gateway.k8s.tutorial:8888/gateway/v2/interceptor?global=false' \
+    --url 'https://gateway-http.k8s.tutorial:8888/gateway/v2/interceptor?global=false' \
     --user "admin:conduktor" \
     --cacert ./certs/rootCA.crt
 ```

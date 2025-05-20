@@ -12,9 +12,10 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
+        - gateway-http.k8s.tutorial
         - gateway.k8s.tutorial
   rules:
-    - host: gateway.k8s.tutorial
+    - host: gateway-http.k8s.tutorial
       http:
         paths:
           - path: /
@@ -23,22 +24,8 @@ spec:
               service:
                 name: gateway-internal
                 port:
-                  number: 9092
-          - path: /gateway/v2
-            pathType: Prefix
-            backend:
-              service:
-                name: gateway-internal
-                port:
                   number: 8888
-          - path: /admin
-            pathType: Prefix
-            backend:
-              service:
-                name: gateway-internal
-                port:
-                  number: 8888
-    - host: "*.k8s.tutorial"
+    - host: "gateway.k8s.tutorial"
       http:
         paths:
           - path: /

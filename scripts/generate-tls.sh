@@ -143,7 +143,7 @@ clean_certificates
 create_ca
 create_truststore
 create_certificate kafka franz-kafka.conduktor.svc.cluster.local *.franz-kafka-controller-headless.conduktor.svc.cluster.local
-create_certificate gateway.k8s.tutorial brokermain0-gateway.k8s.tutorial brokermain1-gateway.k8s.tutorial brokermain2-gateway.k8s.tutorial
+create_certificate gateway.k8s.tutorial brokermain0-gateway.k8s.tutorial brokermain1-gateway.k8s.tutorial brokermain2-gateway.k8s.tutorial gateway-http.k8s.tutorial
 
 # Console HTTPS...but we generally recommend TLS termination at a load balancer for Console.
 # create_certificate console.conduktor.k8s.orb.local
