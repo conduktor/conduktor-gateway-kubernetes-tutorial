@@ -31,11 +31,11 @@ kubectl -n conduktor \
 ########################
 # Create kubernetes secrets for Gateway
 
-# Use gateway.conduktor.k8s.orb.local.keystore.jks since that has the cert for Gateway.
+# Use gateway.k8s.tutorial.keystore.jks since that has the cert for Gateway.
 # Use kafka.truststore.jks since that is the one that trusts the Kafka cert.
 kubectl -n conduktor \
     create secret generic gateway-cert \
-        --from-file=gateway.conduktor.k8s.orb.local.keystore.jks=$PWD/certs/gateway.conduktor.k8s.orb.local.keystore.jks \
+        --from-file=gateway.k8s.tutorial.keystore.jks=$PWD/certs/gateway.k8s.tutorial.keystore.jks \
         --from-file=kafka.truststore.jks=$PWD/certs/kafka.truststore.jks
 
 kubectl -n conduktor \
@@ -68,16 +68,27 @@ helm upgrade --install \
     -n conduktor \
     gateway conduktor/conduktor-gateway
 
+
 # Install Ingress Controller
+kubectl create namespace ingress-nginx
+kubectl apply -f $PWD/kubernetes/ingress-tcp-configmap.yml
+
 helm upgrade \
     --install ingress-nginx ingress-nginx/ingress-nginx \
-    --set controller.extraArgs.enable-ssl-passthrough="true"
+    --namespace ingress-nginx \
+    --set controller.extraArgs.enable-ssl-passthrough="true" \
+    --set controller.extraArgs.tcp-services-configmap=ingress-nginx/tcp-services
+
+kubectl patch svc ingress-nginx-controller -n ingress-nginx \
+  --type='json' \
+  -p='[{"op":"add","path":"/spec/ports/-","value":{"name":"tcp-9092","port":9092,"protocol":"TCP","targetPort":9092}}]'
+
 
 echo "Waiting for the ingress-nginx LoadBalancer IP to be available..."
 
 # Wait for the admission webhook service to have endpoints
 while true; do
-    ENDPOINTS=$(kubectl get endpoints --namespace default ingress-nginx-controller-admission -o jsonpath='{.subsets[0].addresses}')
+    ENDPOINTS=$(kubectl get endpoints --namespace ingress-nginx ingress-nginx-controller-admission -o jsonpath='{.subsets[0].addresses}')
     if [[ -n "$ENDPOINTS" ]]; then
         echo "Admission webhook service is ready!"
         break

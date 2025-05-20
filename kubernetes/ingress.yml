@@ -12,40 +12,39 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - gateway.conduktor.k8s.orb.local
-        - "*.conduktor.k8s.orb.local"
+        - gateway.k8s.tutorial
   rules:
-    - host: gateway.conduktor.k8s.orb.local
+    - host: gateway.k8s.tutorial
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: gateway-external
-                port: 
+                name: gateway-internal
+                port:
                   number: 9092
           - path: /gateway/v2
             pathType: Prefix
             backend:
               service:
-                name: gateway-external
+                name: gateway-internal
                 port:
                   number: 8888
           - path: /admin
             pathType: Prefix
             backend:
               service:
-                name: gateway-external
+                name: gateway-internal
                 port:
                   number: 8888
-    - host: "*.conduktor.k8s.orb.local"
+    - host: "*.k8s.tutorial"
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: gateway-external
-                port: 
+                name: gateway-internal
+                port:
                   number: 9092
