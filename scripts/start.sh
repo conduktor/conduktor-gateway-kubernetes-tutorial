@@ -38,6 +38,15 @@ kubectl -n conduktor \
         --from-file=gateway.k8s.tutorial.keystore.jks=$PWD/certs/gateway.k8s.tutorial.keystore.jks \
         --from-file=kafka.truststore.jks=$PWD/certs/kafka.truststore.jks
 
+openssl rsa \
+    -in ./certs/gateway.k8s.tutorial.key \
+    -out ./certs/gateway.k8s.tutorial.unencrypted.key -passin pass:conduktor
+
+kubectl create secret tls gateway-http-tls-secret \
+  --cert=$PWD/certs/gateway.k8s.tutorial.crt \
+  --key=$PWD/certs/gateway.k8s.tutorial.unencrypted.key \
+  -n conduktor
+
 kubectl -n conduktor \
     create secret generic gateway-env-vars \
         --from-literal=KAFKA_SASL_JAAS_CONFIG='org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";' \

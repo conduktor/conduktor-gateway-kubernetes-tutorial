@@ -8,8 +8,5 @@ controller:
       http: http
       https: https
       tcp-9092: 9092
-  extraArgs:
-    enable-ssl-passthrough: "true"
-    tcp-services-configmap: "ingress-nginx/tcp-services"
 tcp:
   "9092": "conduktor/gateway-internal:9092"

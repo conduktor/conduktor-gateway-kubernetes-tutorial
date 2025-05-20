@@ -20,7 +20,7 @@ gateway:
     GATEWAY_ADVERTISED_SNI_PORT: "9092"
     GATEWAY_SNI_HOST_SEPARATOR: "-" # e.g. "brokermain0" + "-" + "gateway.k8s.tutorial"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
-    GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.k8s.tutorial.keystore.jks
+    # GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.k8s.tutorial.keystore.jks
     
     # # Enhanced logging
     # LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug

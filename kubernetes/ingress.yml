@@ -1,19 +1,17 @@
+---
+# This Ingress is for Gateway's REST API.
+# TLS Passthrough for Gateway on Kafka protocol is configured in helm/ingress-nginx-values.yml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-with-sni
   namespace: conduktor
-  annotations:
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
 spec:
   ingressClassName: nginx
   tls:
     - hosts:
         - gateway-http.k8s.tutorial
-        - gateway.k8s.tutorial
+      secretName: gateway-http-tls-secret
   rules:
     - host: gateway-http.k8s.tutorial
       http:
@@ -25,13 +23,3 @@ spec:
                 name: gateway-internal
                 port:
                   number: 8888
-    - host: "gateway.k8s.tutorial"
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: gateway-internal
-                port:
-                  number: 9092
