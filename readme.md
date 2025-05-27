@@ -85,7 +85,7 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
 1. Inspect the certificates for various services. For example, inspect the gateway certificate.
     ```bash
     openssl x509 \
-    -in ./certs/gateway.conduktor.k8s.orb.local.fullchain.crt \
+    -in ./certs/gateway.k8s.tutorial.fullchain.crt \
     -text -noout
     ```
     ```
@@ -96,21 +96,21 @@ This example will use TLS (formerly known as SSL) to encrypt data in transit bet
             ...
             Subject:
                 C=UK, L=LONDON, O=CONDUKTOR, OU=TEST,
-                CN=gateway.conduktor.k8s.orb.local
+                CN=gateway.k8s.tutorial
             ...
             X509v3 extensions:
                 ...
                 X509v3 Subject Alternative Name:
-                    DNS:gateway.conduktor.k8s.orb.local, 
-                    DNS:brokermain0-gateway.conduktor.k8s.orb.local,
-                    DNS:brokermain1-gateway.conduktor.k8s.orb.local,
-                    DNS:brokermain2-gateway.conduktor.k8s.orb.local
+                    DNS:gateway.k8s.tutorial, 
+                    DNS:brokermain0-gateway.k8s.tutorial,
+                    DNS:brokermain1-gateway.k8s.tutorial,
+                    DNS:brokermain2-gateway.k8s.tutorial
     ```
     > **IMPORTANT:** Notice the **Subject Alternate Names** (SAN) that allow Gateway to present various hostnames to the client. This is crucial for hostname-based routing, also known as Server Name Indication (SNI) routing. Kafka clients need to know which particular broker or brokers they need to send requests to.
 
-    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the external IP address of the `LoadBalancer` service. In this case, you would need a DNS record for `gateway.conduktor.k8s.orb.local` and CNAME aliases for each SAN all pointing to the load balancer IP.
+    OrbStack handles DNS resolution automatically for us in this example, but in general, DNS must resolve all of these names to the external IP address of the `LoadBalancer` service. In this case, you would need a DNS record for `gateway.k8s.tutorial` and CNAME aliases for each SAN all pointing to the load balancer IP.
     
-    Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.conduktor.k8s.orb.local` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.conduktor.k8s.orb.local`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
+    Gateway impersonates brokers by presenting various hostnames to the client -- for example, `brokermain0-gateway.k8s.tutorial` to present to the client as the broker with id `0`. The client first needs to trust that the certificate presented by Gateway includes that hostname as a SAN, otherwise TLS handshake will fail. The client then makes its request to `brokermain0-gateway.k8s.tutorial`. Gateway receives this request and uses the SNI headers to understand that it needs to forward the request to the Kafka broker with id `0`.
 
     We recommend using a certificate with a wildcard SAN, which in this case would be `*.conduktor.k8s.orb.local`, as well as the matching DNS wilcard CNAME alias. The `*` wildcard allows for brokers to be added or removed without any changes to certificates, DNS, port security rules, or load balancer targets. If broker `4` is added, requests to that broker will be routed just like for broker `0` without needing to update any infrastructure configuration.
     
@@ -167,7 +167,7 @@ Connect to the adminREST API call, which should receive a successful response wi
 ```bash
 curl \
     --request GET \
-    --url 'https://gateway.conduktor.k8s.orb.local:8888/gateway/v2/interceptor?global=false' \
+    --url 'https://gateway.k8s.tutorial:8888/gateway/v2/interceptor?global=false' \
     --user "admin:conduktor" \
     --cacert ./certs/rootCA.crt
 ```
@@ -197,7 +197,7 @@ Look at the hostnames in the metadata returned by Gateway, accessed externally.
 
 ```bash
 kafka-broker-api-versions \
-    --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
+    --bootstrap-server gateway.k8s.tutorial:9092 \
     --command-config client.properties | grep 9092
 ```
 
@@ -206,7 +206,7 @@ kafka-broker-api-versions \
 Create a topic (going through Gateway).
 
 ```bash
-kafka-topics --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
+kafka-topics --bootstrap-server gateway.k8s.tutorial:9092 \
     --create --topic test --partitions 6 \
     --command-config client.properties
 ```
@@ -223,7 +223,7 @@ List topics (going through Gateway).
 
 ```bash
 kafka-topics --list \
-  --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
+  --bootstrap-server gateway.k8s.tutorial:9092 \
   --command-config client.properties
 ```
 
@@ -231,7 +231,7 @@ Produce to the topic (going through Gateway).
 
 ```bash
 echo "hello" | kafka-console-producer --topic test \
-  --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
+  --bootstrap-server gateway.k8s.tutorial:9092 \
   --producer.config client.properties
 ```
 
@@ -239,7 +239,7 @@ Consume from the topic (going through Gateway). Press `Ctrl+C` to quit.
 
 ```bash
 kafka-console-consumer --topic test --from-beginning \
-  --bootstrap-server gateway.conduktor.k8s.orb.local:9092 \
+  --bootstrap-server gateway.k8s.tutorial:9092 \
   --consumer.config client.properties
 ```
 
@@ -264,11 +264,11 @@ Or for convenience:
 - If you have no choice but to use an Ingress Controller, it must support **layer 4 routing** (TCP, not HTTP) with **TLS-passthrough**.
     - TLS passthrough is required so that Gateway can use the SNI headers in the TLS handshake to route requests to specific brokers. 
 - Your client must be able to resolve all hosts advertised by Gateway to the external IP address. In this example, OrbStack magically routes all `*.k8s.orb.local` into the Kubernetes cluster so you don't have to update DNS anywhere, but if you had to, you would need to make sure all of these hostnames map to the external IP of the `LoadBalancer` service:
-    - `gateway.conduktor.k8s.orb.local`
-    - `brokermain0-gateway.conduktor.k8s.orb.local`
-    - `brokermain1-gateway.conduktor.k8s.orb.local`
-    - `brokermain2-gateway.conduktor.k8s.orb.local`
-    - If you use a wildcard DNS, e.g. `*.conduktor.k8s.orb.local`, then as brokers are added, any `brokermain<broker id>-gateway.conduktor.k8s.orb.local` will be routed automatically without requiring changes elsewhere in the infrastructure.
+    - `gateway.k8s.tutorial`
+    - `brokermain0-gateway.k8s.tutorial`
+    - `brokermain1-gateway.k8s.tutorial`
+    - `brokermain2-gateway.k8s.tutorial`
+    - If you use a wildcard DNS, e.g. `*.conduktor.k8s.orb.local`, then as brokers are added, any `brokermain<broker id>-gateway.k8s.tutorial` will be routed automatically without requiring changes elsewhere in the infrastructure.
 - Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. 
   - Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`
 - Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
@@ -310,21 +310,21 @@ kcat -L -b franz-kafka.conduktor.svc.cluster.local:9092 \
 ```
 
 ```bash
-kcat -L -b gateway.conduktor.k8s.orb.local:9092 \
+kcat -L -b gateway.k8s.tutorial:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/rootCA.crt
 ```
 
 ```bash
-echo "hello1" | kcat -t test -P -b gateway.conduktor.k8s.orb.local:9092 \
+echo "hello1" | kcat -t test -P -b gateway.k8s.tutorial:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/rootCA.crt
 ```
 
 ```bash
-kcat -t test -C -b gateway.conduktor.k8s.orb.local:9092 \
+kcat -t test -C -b gateway.k8s.tutorial:9092 \
     -X security.protocol=SASL_SSL -X sasl.mechanism=PLAIN \
     -X sasl.password=admin-secret -X sasl.username=admin \
     -X ssl.ca.location=./certs/rootCA.crt

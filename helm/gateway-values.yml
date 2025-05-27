@@ -1,7 +1,7 @@
 fullnameOverride: gateway
 
 gateway:
-  # startupProbeDelay: 15
+  startupProbeDelay: 15
   replicas: 2
   secretRef: gateway-env-vars
   env:
@@ -18,9 +18,9 @@ gateway:
     GATEWAY_ADVERTISED_HOST: gateway.k8s.tutorial
     GATEWAY_ROUTING_MECHANISM: host
     GATEWAY_ADVERTISED_SNI_PORT: "9092"
-    GATEWAY_SNI_HOST_SEPARATOR: "-" # e.g. "brokermain0" + "-" + "gateway.conduktor.k8s.orb.local"
+    GATEWAY_SNI_HOST_SEPARATOR: "-" # e.g. "brokermain0" + "-" + "gateway.k8s.tutorial"
     GATEWAY_FEATURE_FLAGS_INTERNAL_LOAD_BALANCING: "false"
-    GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.conduktor.k8s.orb.local.keystore.jks
+    GATEWAY_HTTPS_KEY_STORE_PATH: /etc/gateway/tls/gateway.k8s.tutorial.keystore.jks
     
     # # Enhanced logging
     # LOG4J2_ORG_APACHE_KAFKA_LEVEL: debug
@@ -44,8 +44,8 @@ gateway:
 tls:
   enable: true
   secretRef: gateway-cert
-  keystoreFile: gateway.conduktor.k8s.orb.local.keystore.jks
-  keystoreKey: gateway.conduktor.k8s.orb.local.keystore.jks
+  keystoreFile: gateway.k8s.tutorial.keystore.jks
+  keystoreKey: gateway.k8s.tutorial.keystore.jks
 
 service:
   external:

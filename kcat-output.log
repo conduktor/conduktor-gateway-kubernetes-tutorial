@@ -1,0 +1,168 @@
+%7|1748382828.514|BRKMAIN|rdkafka#consumer-1| [thrd::0/internal]: :0/internal: Enter main broker thread
+%7|1748382828.514|BROKER|rdkafka#consumer-1| [thrd:app]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Added new broker with NodeId -1
+%7|1748382828.514|BRKMAIN|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Enter main broker thread
+%7|1748382828.514|CONNECT|rdkafka#consumer-1| [thrd:app]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Selected for cluster connection: bootstrap servers added (broker has 0 connection attempt(s))
+%7|1748382828.514|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Received CONNECT op
+%7|1748382828.514|INIT|rdkafka#consumer-1| [thrd:app]: librdkafka v2.8.0 (0x20800ff) rdkafka#consumer-1 initialized (builtin.features gzip,snappy,ssl,sasl,regex,lz4,sasl_gssapi,sasl_plain,sasl_scram,plugins,zstd,sasl_oauthbearer,http,oidc, CC CXX PKGCONFIG OSXLD LIBDL PLUGINS ZLIB SSL SASL_CYRUS ZSTD CURL HDRHISTOGRAM LZ4_EXT SYSLOG SNAPPY SOCKEM SASL_SCRAM SASL_OAUTHBEARER OAUTHBEARER_OIDC, debug 0xb)
+%7|1748382828.514|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state INIT -> TRY_CONNECT
+%7|1748382828.514|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.514|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: broker in state TRY_CONNECT connecting
+%7|1748382828.514|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state TRY_CONNECT -> CONNECT
+%7|1748382828.514|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.514|CONNECT|rdkafka#consumer-1| [thrd:app]: Not selecting any broker for cluster connection: still suppressed for 49ms: leader query
+%7|1748382828.514|METADATA|rdkafka#consumer-1| [thrd:app]: Hinted cache of 1/1 topic(s) being queried
+%7|1748382828.514|METADATA|rdkafka#consumer-1| [thrd:app]: Skipping metadata refresh of 1 topic(s): leader query: no usable brokers
+%7|1748382828.514|CONNECT|rdkafka#consumer-1| [thrd:app]: Not selecting any broker for cluster connection: still suppressed for 49ms: application metadata request
+%7|1748382828.516|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Connecting to ipv4#198.19.249.2:9092 (sasl_ssl) with socket 9
+%7|1748382828.517|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Connected to ipv4#198.19.249.2:9092
+%7|1748382828.517|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state CONNECT -> SSL_HANDSHAKE
+%7|1748382828.517|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.517|CONNECT|rdkafka#consumer-1| [thrd:app]: Not selecting any broker for cluster connection: still suppressed for 47ms: application metadata request
+%7|1748382828.522|CONNECTED|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Connected (#1)
+%7|1748382828.522|FEATURE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Updated enabled protocol features +ApiVersion to ApiVersion
+%7|1748382828.522|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state SSL_HANDSHAKE -> APIVERSION_QUERY
+%7|1748382828.522|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.522|CONNECT|rdkafka#consumer-1| [thrd:app]: Not selecting any broker for cluster connection: still suppressed for 42ms: application metadata request
+%7|1748382828.571|FEATURE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Updated enabled protocol features to MsgVer1,ApiVersion,BrokerBalancedConsumer,ThrottleTime,Sasl,SaslHandshake,BrokerGroupCoordinator,LZ4,OffsetTime,MsgVer2,IdempotentProducer,ZSTD,SaslAuthReq
+%7|1748382828.571|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Auth in state APIVERSION_QUERY (handshake supported)
+%7|1748382828.571|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state APIVERSION_QUERY -> AUTH_HANDSHAKE
+%7|1748382828.571|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.571|CONNECT|rdkafka#consumer-1| [thrd:app]: Cluster connection already in progress: application metadata request
+%7|1748382828.574|SASLMECHS|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker supported SASL mechanisms: PLAIN
+%7|1748382828.574|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Auth in state AUTH_HANDSHAKE (handshake supported)
+%7|1748382828.574|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state AUTH_HANDSHAKE -> AUTH_REQ
+%7|1748382828.574|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.574|CONNECT|rdkafka#consumer-1| [thrd:app]: Not selecting any broker for cluster connection: still suppressed for 46ms: application metadata request
+%7|1748382828.577|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state AUTH_REQ -> UP
+%7|1748382828.577|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382828.577|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Hinted cache of 1/1 topic(s) being queried
+%7|1748382828.577|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Requesting metadata for 1/1 topics: connected
+%7|1748382828.577|METADATA|rdkafka#consumer-1| [thrd:app]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Request metadata for 1 topic(s): application requested
+%7|1748382828.577|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Request metadata for 1 topic(s): connected
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ===== Received metadata (for 1 requested topics): connected =====
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ClusterId: WF8SRAgaEyYPFEuJXWF4BG, ControllerId: 2
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: 3 brokers, 1 topics
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Broker #0/3: brokermain0-gateway.k8s.tutorial:9092 NodeId 0
+%7|1748382828.581|BROKER|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Added new broker with NodeId 0
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Broker #1/3: brokermain1-gateway.k8s.tutorial:9092 NodeId 1
+%7|1748382828.581|BROKER|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Added new broker with NodeId 1
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Broker #2/3: brokermain2-gateway.k8s.tutorial:9092 NodeId 2
+%7|1748382828.581|BRKMAIN|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Enter main broker thread
+%7|1748382828.581|BROKER|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain2-gateway.k8s.tutorial:9092/2: Added new broker with NodeId 2
+%7|1748382828.581|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Topic test with 1 partitions
+%7|1748382828.582|METADATA|rdkafka#consumer-1| [thrd:main]: Topic test changed id from AAAAAAAAAAAAAAAAAAAAAA to HZphSdrWThKVBGhL/WPIpQ
+%7|1748382828.582|METADATA|rdkafka#consumer-1| [thrd:main]: Topic test [0] Leader 0 Epoch 0
+%7|1748382828.582|BRKMAIN|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain2-gateway.k8s.tutorial:9092/2]: sasl_ssl://brokermain2-gateway.k8s.tutorial:9092/2: Enter main broker thread
+%7|1748382828.581|BRKMAIN|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Enter main broker thread
+%7|1748382828.582|CLUSTERID|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ClusterId update "" -> "WF8SRAgaEyYPFEuJXWF4BG"
+%7|1748382828.582|TOPBRK|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Topic test [0]: joining broker (rktp 0x127025200, 0 message(s) queued)
+%7|1748382828.582|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.582|CONTROLLERID|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ControllerId update -1 -> 2
+%7|1748382828.582|BROADCAST|rdkafka#consumer-1| [thrd:main]: Broadcasting state change
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ===== Received metadata (for 1 requested topics): application requested =====
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ClusterId: WF8SRAgaEyYPFEuJXWF4BG, ControllerId: 1
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: 3 brokers, 1 topics
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Broker #0/3: brokermain0-gateway.k8s.tutorial:9092 NodeId 0
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Broker #1/3: brokermain1-gateway.k8s.tutorial:9092 NodeId 1
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Broker #2/3: brokermain2-gateway.k8s.tutorial:9092 NodeId 2
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap:   Topic test with 1 partitions
+%7|1748382828.584|METADATA|rdkafka#consumer-1| [thrd:main]: Topic test [0] Leader 0 Epoch 0
+%7|1748382828.584|CONTROLLERID|rdkafka#consumer-1| [thrd:main]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: ControllerId update 2 -> 1
+%7|1748382828.584|BROADCAST|rdkafka#consumer-1| [thrd:main]: Broadcasting state change
+%7|1748382828.584|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state INIT -> TRY_CONNECT
+%7|1748382828.584|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.584|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: broker in state TRY_CONNECT connecting
+%7|1748382828.584|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state TRY_CONNECT -> CONNECT
+%7|1748382828.584|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.586|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Connecting to ipv4#198.19.249.2:9092 (sasl_ssl) with socket 17
+%7|1748382828.586|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Connected to ipv4#198.19.249.2:9092
+%7|1748382828.586|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state CONNECT -> SSL_HANDSHAKE
+%7|1748382828.586|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.589|CONNECTED|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Connected (#1)
+%7|1748382828.589|FEATURE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Updated enabled protocol features +ApiVersion to ApiVersion
+%7|1748382828.589|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state SSL_HANDSHAKE -> APIVERSION_QUERY
+%7|1748382828.589|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.634|FEATURE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Updated enabled protocol features to MsgVer1,ApiVersion,BrokerBalancedConsumer,ThrottleTime,Sasl,SaslHandshake,BrokerGroupCoordinator,LZ4,OffsetTime,MsgVer2,IdempotentProducer,ZSTD,SaslAuthReq
+%7|1748382828.634|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Auth in state APIVERSION_QUERY (handshake supported)
+%7|1748382828.634|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state APIVERSION_QUERY -> AUTH_HANDSHAKE
+%7|1748382828.634|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.635|SASLMECHS|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker supported SASL mechanisms: PLAIN
+%7|1748382828.635|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Auth in state AUTH_HANDSHAKE (handshake supported)
+%7|1748382828.635|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state AUTH_HANDSHAKE -> AUTH_REQ
+%7|1748382828.635|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.636|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state AUTH_REQ -> UP
+%7|1748382828.636|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382828.636|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Skipping metadata refresh of 1 topic(s): connected: already being requested
+%7|1748382897.610|FAIL|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Disconnected (after 69033ms in state UP) (_TRANSPORT)
+%7|1748382897.610|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state UP -> DOWN
+%7|1748382897.611|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382897.611|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Requesting metadata for 1/1 topics: broker down
+%7|1748382897.611|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Request metadata for 1 topic(s): broker down
+%7|1748382897.611|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: sasl_ssl://gateway.k8s.tutorial:9092/bootstrap: Broker changed state DOWN -> INIT
+%7|1748382897.627|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://gateway.k8s.tutorial:9092/bootstrap]: Broadcasting state change
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: ===== Received metadata (for 1 requested topics): broker down =====
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: ClusterId: WF8SRAgaEyYPFEuJXWF4BG, ControllerId: 2
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: 3 brokers, 1 topics
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0:   Broker #0/3: brokermain0-gateway.k8s.tutorial:9092 NodeId 0
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0:   Broker #1/3: brokermain1-gateway.k8s.tutorial:9092 NodeId 1
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0:   Broker #2/3: brokermain2-gateway.k8s.tutorial:9092 NodeId 2
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0:   Topic test with 1 partitions
+%7|1748382897.681|METADATA|rdkafka#consumer-1| [thrd:main]: Topic test [0] Leader 0 Epoch 0
+%7|1748382897.681|CONTROLLERID|rdkafka#consumer-1| [thrd:main]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: ControllerId update 1 -> 2
+%7|1748382897.681|BROADCAST|rdkafka#consumer-1| [thrd:main]: Broadcasting state change
+%7|1748382918.334|FAIL|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Disconnected (after 89698ms in state UP) (_TRANSPORT)
+%6|1748382918.335|FAIL|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Disconnected (after 89698ms in state UP)
+%7|1748382918.335|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state UP -> DOWN
+%7|1748382918.335|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.335|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Selected for cluster connection: broker down (broker has 0 connection attempt(s))
+%7|1748382918.335|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Skipping metadata refresh of 1 topic(s): broker down: no usable brokers
+%7|1748382918.335|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state DOWN -> INIT
+%7|1748382918.335|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.335|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state INIT -> TRY_CONNECT
+%7|1748382918.335|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.335|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: broker in state TRY_CONNECT connecting
+%7|1748382918.335|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state TRY_CONNECT -> CONNECT
+%7|1748382918.335|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.336|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Received CONNECT op
+%7|1748382918.336|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state INIT -> TRY_CONNECT
+%7|1748382918.336|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+%7|1748382918.336|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: broker in state TRY_CONNECT connecting
+%7|1748382918.336|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state TRY_CONNECT -> CONNECT
+%7|1748382918.336|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+%7|1748382918.337|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Connecting to ipv4#198.19.249.2:9092 (sasl_ssl) with socket 17
+%7|1748382918.337|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Connecting to ipv4#198.19.249.2:9092 (sasl_ssl) with socket 9
+%7|1748382918.338|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Connected to ipv4#198.19.249.2:9092
+%7|1748382918.338|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state CONNECT -> SSL_HANDSHAKE
+%7|1748382918.338|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+%7|1748382918.338|CONNECT|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Connected to ipv4#198.19.249.2:9092
+%7|1748382918.338|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state CONNECT -> SSL_HANDSHAKE
+%7|1748382918.338|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.353|CONNECTED|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Connected (#1)
+%7|1748382918.353|FEATURE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Updated enabled protocol features +ApiVersion to ApiVersion
+%7|1748382918.353|CONNECTED|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Connected (#2)
+%7|1748382918.353|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state SSL_HANDSHAKE -> APIVERSION_QUERY
+%7|1748382918.353|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.353|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state SSL_HANDSHAKE -> APIVERSION_QUERY
+%7|1748382918.353|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+% ERROR: Local: Broker transport failure: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Disconnected (after 89698ms in state UP)
+%7|1748382918.471|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Auth in state APIVERSION_QUERY (handshake supported)
+%7|1748382918.471|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state APIVERSION_QUERY -> AUTH_HANDSHAKE
+%7|1748382918.471|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.480|SASLMECHS|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker supported SASL mechanisms: PLAIN
+%7|1748382918.480|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Auth in state AUTH_HANDSHAKE (handshake supported)
+%7|1748382918.480|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state AUTH_HANDSHAKE -> AUTH_REQ
+%7|1748382918.480|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.492|FEATURE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Updated enabled protocol features to MsgVer1,ApiVersion,BrokerBalancedConsumer,ThrottleTime,Sasl,SaslHandshake,BrokerGroupCoordinator,LZ4,OffsetTime,MsgVer2,IdempotentProducer,ZSTD,SaslAuthReq
+%7|1748382918.492|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Auth in state APIVERSION_QUERY (handshake supported)
+%7|1748382918.492|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state APIVERSION_QUERY -> AUTH_HANDSHAKE
+%7|1748382918.492|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+%7|1748382918.500|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0: Broker changed state AUTH_REQ -> UP
+%7|1748382918.500|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Broadcasting state change
+%7|1748382918.500|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain0-gateway.k8s.tutorial:9092/0]: Skipping metadata refresh of 1 topic(s): connected: already being requested
+%7|1748382918.510|SASLMECHS|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker supported SASL mechanisms: PLAIN
+%7|1748382918.510|AUTH|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Auth in state AUTH_HANDSHAKE (handshake supported)
+%7|1748382918.510|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state AUTH_HANDSHAKE -> AUTH_REQ
+%7|1748382918.510|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+%7|1748382918.544|STATE|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1: Broker changed state AUTH_REQ -> UP
+%7|1748382918.544|BROADCAST|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Broadcasting state change
+%7|1748382918.544|METADATA|rdkafka#consumer-1| [thrd:sasl_ssl://brokermain1-gateway.k8s.tutorial:9092/1]: Skipping metadata refresh of 1 topic(s): connected: already being requested
