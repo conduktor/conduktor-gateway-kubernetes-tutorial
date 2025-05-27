@@ -15,7 +15,7 @@ gateway:
     
     # Configure Client -> Gateway
     GATEWAY_SECURITY_PROTOCOL: DELEGATED_SASL_SSL
-    GATEWAY_ADVERTISED_HOST: gateway.conduktor.k8s.orb.local
+    GATEWAY_ADVERTISED_HOST: gateway.k8s.tutorial
     GATEWAY_ROUTING_MECHANISM: host
     GATEWAY_ADVERTISED_SNI_PORT: "9092"
     GATEWAY_SNI_HOST_SEPARATOR: "-" # e.g. "brokermain0" + "-" + "gateway.conduktor.k8s.orb.local"
