@@ -163,7 +163,35 @@ DO NOT upload the rootCA.crt. Uploading will allow you to manage Gateway interce
 
 ## Connect to Gateway
 
-Connect to the adminREST API call, which should receive a successful response with an empty list.
+Connect to the admin REST API. You should receive an error that the hostname is not resolvable. The following command should receive a successful response with an empty list.
+```bash
+curl \
+    --request GET \
+    --url 'https://gateway.k8s.tutorial:8888/gateway/v2/interceptor?global=false' \
+    --user "admin:conduktor" \
+    --cacert ./certs/rootCA.crt
+```
+```
+curl: (6) Could not resolve host: gateway.k8s.tutorial
+```
+In order to resolve the host, we need to get the external IP from Kubernetes.
+```
+k get svc -n conduktor gateway-external
+            
+NAME               TYPE           CLUSTER-IP        EXTERNAL-IP    PORT(S)                         AGE
+gateway-external   LoadBalancer   192.168.194.166   198.19.249.2   9092:30759/TCP,8888:30154/TCP   8m8s
+```
+
+In this case, the external IP is `198.19.249.2`. In the real world, you would need to make a DNS entry, but here we can just append this line to `/etc/hosts`.
+
+```
+198.19.249.2 gateway.k8s.tutorial brokermain0-gateway.k8s.tutorial brokermain1-gateway.k8s.tutorial brokermain2-gateway.k8s.tutorial
+```
+
+> NOTE: Notice how we have all the hostnames we expect Gateway to return all pointing to the external IP exposed by the Kubernetes `LoadBalancer` service.
+
+Now let's try the `curl` again. We should receive a successful response with an empty list.
+
 ```bash
 curl \
     --request GET \
@@ -175,6 +203,8 @@ curl \
 [
 ]%
 ```
+
+Next we will look at connecting a Kafka client.
 
 In newer JDKs, Java clients need to run with this env var set (see [KIP 1006](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1006%3A+Remove+SecurityManager+Support)):
 ```bash
@@ -192,6 +222,8 @@ kafka-broker-api-versions \
 
 **NOTE**: The above uses a bit of OrbStack networking magic to reach an internal service from your laptop.
 Usually you would only be able to reach an internal service from a pod within the kubernetes cluster.
+If this isn't working, you can try `orbctl stop` followed by `orbctl start` to restart the orbstack environment.
+All Kubernetes resources should remain intact.
 
 Look at the hostnames in the metadata returned by Gateway, accessed externally.
 
@@ -200,8 +232,6 @@ kafka-broker-api-versions \
     --bootstrap-server gateway.k8s.tutorial:9092 \
     --command-config client.properties | grep 9092
 ```
-
-> **NOTE**: OrbStack does some magic networking here to allow you to reach external `LoadBalancer` services using the `*.k8s.orb.local` domain.
 
 Create a topic (going through Gateway).
 
