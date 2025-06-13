@@ -163,7 +163,7 @@ DO NOT upload the rootCA.crt. Uploading will allow you to manage Gateway interce
 
 ## Connect to Gateway
 
-Connect to the admin REST API. You should receive an error that the hostname is not resolvable. The following command should receive a successful response with an empty list.
+Connect to the admin REST API. You should receive an error that the hostname is not resolvable.
 ```bash
 curl \
     --request GET \
