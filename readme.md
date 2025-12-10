@@ -293,15 +293,14 @@ Or for convenience:
     - For exmaple, AWS EKS uses the Load Balancer Controller with Network Load Balancer (NLB) to expose `LoadBalancer` services.
 - If you have no choice but to use an Ingress Controller, it must support **layer 4 routing** (TCP, not HTTP) with **TLS-passthrough**.
     - TLS passthrough is required so that Gateway can use the SNI headers in the TLS handshake to route requests to specific brokers. 
-- Your client must be able to resolve all hosts advertised by Gateway to the external IP address. In this example, OrbStack magically routes all `*.k8s.orb.local` into the Kubernetes cluster so you don't have to update DNS anywhere, but if you had to, you would need to make sure all of these hostnames map to the external IP of the `LoadBalancer` service:
+- Your client must be able to resolve all hosts advertised by Gateway to the external IP address. In real life, this means creating DNS records to make sure all relevant hostnames point to the external IP of the `LoadBalancer` service. In this example, we simulated this by modifying `/etc/hosts`point these hostnames to the external IP of the `LoadBalancer` service:
     - `gateway.k8s.tutorial`
     - `brokermain0-gateway.k8s.tutorial`
     - `brokermain1-gateway.k8s.tutorial`
     - `brokermain2-gateway.k8s.tutorial`
-    - If you use a wildcard DNS, e.g. `*.conduktor.k8s.orb.local`, then as brokers are added, any `brokermain<broker id>-gateway.k8s.tutorial` will be routed automatically without requiring changes elsewhere in the infrastructure.
-- Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers. 
-  - Alternatively, you could use a certificate with a wildcard CN, which in this case would be `CN=*.conduktor.k8s.orb.local`
-- Since we are using an external load balancer, we do not need to use Gateway's internal load balancing mechanism. The external load balancer will distribute load.
+    - If you use a wildcard DNS, e.g. `*.k8s.tutorial`, then as brokers are added, any `brokermain<broker id>-gateway.k8s.tutorial` will be routed automatically without requiring changes elsewhere in the infrastructure.
+- Gateway's TLS certificate must include SANs so that it can be trusted by the client when it presents itself as different brokers.
+- Since we are using an external load balancer (Kubernetes Service of type `LoadBalancer`), we do not need to use Gateway's internal load balancing mechanism.
 
 ## Appendix
 
