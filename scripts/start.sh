@@ -22,7 +22,7 @@ kubectl -n conduktor \
     create secret generic client-passwords \
         --from-literal=client-passwords=admin-secret \
         --from-literal=inter-broker-password=admin-secret \
-        --from-literal=controller-password=admin-secret 
+        --from-literal=controller-password=admin-secret
 
 kubectl -n conduktor \
     create secret generic kafka-cert \
@@ -31,11 +31,11 @@ kubectl -n conduktor \
 ########################
 # Create kubernetes secrets for Gateway
 
-# Use gateway.k8s.tutorial.keystore.jks since that has the cert for Gateway.
+# Use gateway.conduktor.k8s.tutorial.keystore.jks since that has the cert for Gateway.
 # Use kafka.truststore.jks since that is the one that trusts the Kafka cert.
 kubectl -n conduktor \
     create secret generic gateway-cert \
-        --from-file=gateway.k8s.tutorial.keystore.jks=$PWD/certs/gateway.k8s.tutorial.keystore.jks \
+        --from-file=gateway.conduktor.k8s.tutorial.keystore.jks=$PWD/certs/gateway.conduktor.k8s.tutorial.keystore.jks \
         --from-file=kafka.truststore.jks=$PWD/certs/kafka.truststore.jks
 
 kubectl -n conduktor \
