@@ -207,11 +207,14 @@ curl \
 
 Next we will look at connecting a Kafka client.
 
-In newer JDKs, Java clients need to run with this env var set (see [KIP 1006](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1006%3A+Remove+SecurityManager+Support)):
-```bash
-export KAFKA_OPTS="-Djava.security.manager=allow"
-```
-You can also add ` -Djavax.net.debug=ssl` to enable ssl debug messages.
+> **JDK note:** Some older guides recommend setting `KAFKA_OPTS="-Djava.security.manager=allow"` per [KIP-1006](https://cwiki.apache.org/confluence/display/KAFKA/KIP-1006%3A+Remove+SecurityManager+Support). The flag is only useful on **JDK 17–23 with Kafka 3.x clients** (where Kafka client code transitively touched the SecurityManager API).
+> - On **Kafka 4.x clients** — what `brew install kafka` gives you today — KIP-1006 removed the relevant code path, so the flag does nothing useful.
+> - On **JDK 24+** ([JEP 486](https://openjdk.org/jeps/486) removed the SecurityManager API entirely) the flag is *rejected* and the JVM refuses to start with a `Security Manager is not supported` error.
+>
+> Leave `KAFKA_OPTS` unset unless you have a specific reason. You can still pass `-Djavax.net.debug=ssl` to enable SSL debug logging:
+> ```bash
+> export KAFKA_OPTS="-Djavax.net.debug=ssl"
+> ```
 
 Look at the hostnames in the metadata returned by Kafka.
 
