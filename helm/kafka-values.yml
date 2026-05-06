@@ -2,6 +2,14 @@
 
 replicaCount: 3
 
+global:
+  security:
+    allowInsecureImages: true
+
+image:
+  registry: docker.io
+  repository: bitnamilegacy/kafka
+
 listeners:
   client:
     protocol: SASL_SSL

@@ -39,7 +39,7 @@ gateway:
   volumeMounts:
     - name: truststore
       mountPath: /etc/gateway/tls/truststore/
-      readonly: true
+      readOnly: true
 
 tls:
   enable: true
